@@ -31,13 +31,11 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
         this.context = context;
         reminderTitle = (TextView)itemView.findViewById(R.id.reminder_title);
         reminderDate = (TextView)itemView.findViewById(R.id.reminder_date);
-        isDoneButton = (RadioButton) itemView.findViewById(R.id.reminder_is_done);
     }
 
     public void bindView(ReminderMock data){
         reminderTitle.setText(data.getTitle());
         reminderDate.setText(dateFormate.format(data.getReminderDate()));
-        isDoneButton.setChecked(data.isDone());
     }
     @Override
     public void onClick(View v) {

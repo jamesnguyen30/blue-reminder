@@ -5,8 +5,10 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,16 +34,21 @@ public class ReminderFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.reminder_list_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        FloatingActionButton fab = (FloatingActionButton) container.getRootView().findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-//    }
+        //floating button in main activity,
+        //Because I want to keep this button through Fragment transition
+//
+//        FloatingActionButton fab = (FloatingActionButton)container.getRootView().findViewById(R.id.fab);
+//
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                //start NewReminder fragment
+//                Log.d("MainActivity", "clicked");
+//            }
+//        });
+
+
         setReminderAdapter();
         return view;
     }

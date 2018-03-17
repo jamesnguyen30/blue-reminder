@@ -9,12 +9,10 @@ import java.util.Date;
 public class ReminderMock {
     private String title;
     private Date reminderDate;
-    private boolean isDone;
 
     public ReminderMock(String title) {
         this.title = title;
         reminderDate = new Date();
-        isDone = false;
     }
 
     public String getTitle() {
@@ -33,11 +31,4 @@ public class ReminderMock {
         this.reminderDate = reminderDate;
     }
 
-    public boolean isDone() {
-        return isDone;
-    }
-
-    public void setDone(boolean done) {
-        isDone = done;
-    }
 }
