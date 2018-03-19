@@ -20,11 +20,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
     ReminderDatabaseMock database;
     Context context;
 
-    public ReminderAdapter(Context context) {
+    public ReminderAdapter(Context context, ReminderDatabaseMock db) {
         this.context = context;
-        //populate mock database when this adapter is created
-        database = new ReminderDatabaseMock();
-        database.populateMockDatbase();
+        database = db;
     }
 
     @Override
@@ -44,4 +42,5 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
     public int getItemCount() {
         return database.getDbSize();
     }
+
 }

@@ -16,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.jamesnguyen.taskcycle.MainActivity;
 import com.example.jamesnguyen.taskcycle.R;
 
 /**
@@ -24,13 +25,32 @@ import com.example.jamesnguyen.taskcycle.R;
 
 public class NewItemFragment extends Fragment {
 
+    public static final String TAG = "NewItemFragmentTag";
+    public interface OnNewItemCreated{
+        //TODO pass an Item object here,
+        // pass a mock object for now
+        void onNewItemCreated(String itemName);
+    }
     FloatingActionButton fab;
     EditText mEditText;
+    OnNewItemCreated mCallback;
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            //attach the mCallBack to the host activity
+            mCallback = (OnNewItemCreated) getActivity();
+        } catch(ClassCastException e){
+            throw new ClassCastException(getActivity().getPackageName()
+                    + " must implements the OnNewItemCreated interface");
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
@@ -55,13 +75,12 @@ public class NewItemFragment extends Fragment {
                 switch(actionId){
                     case EditorInfo.IME_ACTION_DONE:
                         //TODO add new item with the information
-                        Log.d("NewFragment", v.getText().toString());
-
+                        //Log.d("NewFragment", v.getText().toString());
+                        mCallback.onNewItemCreated(v.getText().toString());
                         //remove this fragment from Support Fragment Manager
                         getActivity().getSupportFragmentManager().popBackStack();
 
                         return false;
-
                     default:
                         return false;
                 }

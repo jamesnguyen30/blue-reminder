@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.jamesnguyen.taskcycle.MainActivity;
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
@@ -22,6 +23,8 @@ import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
  */
 
 public class ReminderFragment extends Fragment {
+    public static final String TAG = "ReminderFragmentTag";
+    public static final String DATABASE_REF_ARGUMENT = "db_ref_argument";
     RecyclerView mRecyclerView;
     ReminderAdapter mReminderAdapter;
     //TODO database reference
@@ -34,21 +37,6 @@ public class ReminderFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.reminder_list_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-
-        //floating button in main activity,
-        //Because I want to keep this button through Fragment transition
-//
-//        FloatingActionButton fab = (FloatingActionButton)container.getRootView().findViewById(R.id.fab);
-//
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                //start NewReminder fragment
-//                Log.d("MainActivity", "clicked");
-//            }
-//        });
-
-
         setReminderAdapter();
         return view;
     }
@@ -56,7 +44,19 @@ public class ReminderFragment extends Fragment {
     public void setReminderAdapter(){
         //start the database adapter
         //set up the database
-        mReminderAdapter = new ReminderAdapter(getActivity());
+        //this is a bad approach if you want your fragment to be
+        //used independently from MainActivity
+        //for this approach, this fragment only works
+        //for MainActivity,
+        //DELETE THIS COMMENT WHEN THERE'S A BETTER SOLUTION
+        ReminderDatabaseMock db = ((MainActivity)getActivity()).getDatabase();
+        mReminderAdapter = new ReminderAdapter(getActivity(),db);
         mRecyclerView.setAdapter(mReminderAdapter);
     }
+
+    public void updateDatabase(){
+        mReminderAdapter.notifyDataSetChanged();
+    }
+
+
 }
