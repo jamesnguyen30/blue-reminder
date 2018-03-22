@@ -58,5 +58,4 @@ public class ReminderFragment extends Fragment {
         mReminderAdapter.notifyDataSetChanged();
     }
 
-
 }
