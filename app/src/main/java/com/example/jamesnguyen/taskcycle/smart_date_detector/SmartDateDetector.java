@@ -1,5 +1,6 @@
 package com.example.jamesnguyen.taskcycle.smart_date_detector;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,7 +16,8 @@ public class SmartDateDetector {
             "(everyday|today|tomorrow|next week|next month|next year)|" +
                     "(on *|next *)?(monday|mon|tuesday|tue|wednesday|wed|thursday|thu|friday|fri|saturday|sat|sunday|sun)|" +
                     "(on *)?(january|jan|february|feb|march|mar|april|may|june|july|jul|august|aug|september|sep|october|oct|november|nov|december|dec) *(\\d{1,2})? (\\d{4})?|" +
-                    "(on *)(\\d{1,2})[.](\\d{1,2})[.]?(\\d{4})?|(at *)(\\d{1,2}) *(: *(\\d{1,2}))? *(am|pm|in the morning|in morning|morning|in the night|at night|night|in the evening)?";
+                    "(on *)(\\d{1,2})[.](\\d{1,2})[.]?(\\d{4})?|" +
+                    "(at *)(\\d{1,2}) {0,1}(: *(\\d{1,2}))? {0,1}(am|pm|in the morning|in morning|morning|in the night|at night|night|in the evening)?";
 
     private Pattern pattern = Pattern.compile(REG_PATTERN, Pattern.CASE_INSENSITIVE);
     private Matcher matcher;
@@ -47,16 +49,22 @@ public class SmartDateDetector {
         return matchedPositions.size();
     }
 
+    public ArrayList<MatchedPosition> getMatchedPositions(){
+        return matchedPositions;
+    }
+
     public MatchedPosition getMatchPositionAt(int index){
         return matchedPositions.get(index);
     }
 
     //return a pre-defined matched groups
 
-    public void findMatches(){
+    public boolean findMatches(){
         matcher = pattern.matcher(originalText);
         groups = new String[matcher.groupCount()+1];
+        matchedPositions.clear();
         MatchedPosition matchedPosition;
+        boolean isFound = false;
         while(matcher.find()){
             for(int i =0;i<=matcher.groupCount();i++){
                 if(matcher.group(i)!=null){
@@ -65,8 +73,12 @@ public class SmartDateDetector {
             }
             matchedPosition = new MatchedPosition(matcher.start(),matcher.end());
             this.matchedPositions.add(matchedPosition);
+            isFound = true;
         }
-        return;
+        if(isFound)
+            return true;
+        else
+            return false;
     }
 
     public String[] getMatchedGroups(){
@@ -126,8 +138,6 @@ public class SmartDateDetector {
             }
         }
         calendar = new GregorianCalendar(year, month, day, hour, minute);
-
-
         //set day of the week, recognize next week, next month, next year phrase
         if(groups[1]!=null){
             setDayByPhrase(calendar, groups[1]);

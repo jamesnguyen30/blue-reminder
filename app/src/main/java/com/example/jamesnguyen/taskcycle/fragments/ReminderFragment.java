@@ -36,7 +36,6 @@ public class ReminderFragment extends Fragment {
         View view = inflater.inflate(R.layout.reminder_list_fragment, container,  false);
         mRecyclerView = view.findViewById(R.id.reminder_list_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         setReminderAdapter();
         return view;
     }

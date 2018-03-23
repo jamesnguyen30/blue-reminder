@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
             @Override
             public void onClick(View v) {
                 //start new item fragment
-                Log.d("MainActivyt","Clicked");
+
                 NewItemFragment newFragment = NewItemFragment.newInstance();
                 getSupportFragmentManager()
                         .beginTransaction()
