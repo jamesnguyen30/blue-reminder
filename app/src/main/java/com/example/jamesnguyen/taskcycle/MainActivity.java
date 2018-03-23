@@ -22,6 +22,8 @@ import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderMock;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity implements NewItemFragment.OnNewItemCreated {
 
     FloatingActionButton fab;
@@ -108,21 +110,20 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
 
     //Callback get called when NewItemFragment done entering the item creation
     @Override
-    public void onNewItemCreated(String itemName) {
+    public void onNewItemCreated(String itemName, Calendar calendar) {
         Log.d(getLocalClassName(), itemName);
-        testEncapsulation(new ReminderMock(itemName));
+        testEncapsulation(new ReminderMock(itemName, calendar));
         //tell the reminder fragment to update its dataset
         ReminderFragment fragment = (ReminderFragment)getSupportFragmentManager()
                 .findFragmentByTag(ReminderFragment.TAG);
         fragment.updateDatabase();
-
-
 
     }
 
     public void testEncapsulation(ReminderMock e){
         database.addNewReminder(e);
     }
+
     @Override
     protected void onPause() {
         super.onPause();

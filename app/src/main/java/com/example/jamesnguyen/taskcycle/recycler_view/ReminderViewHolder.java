@@ -9,7 +9,6 @@ import android.widget.TextView;
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderMock;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 /**
@@ -24,7 +23,7 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
 
     //Context to start activity
     Context context;
-    DateFormat dateFormate = new SimpleDateFormat("EEE, MMM dd yyyy");
+    SimpleDateFormat dateFormate = new SimpleDateFormat("EEE, M.d.yyyy hh:mm");
 
     public ReminderViewHolder(View itemView, Context context) {
         super(itemView);
@@ -35,7 +34,7 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
 
     public void bindView(ReminderMock data){
         reminderTitle.setText(data.getTitle());
-        reminderDate.setText(dateFormate.format(data.getReminderDate()));
+        reminderDate.setText(dateFormate.format(data.getCalendar().getTime()));
     }
     @Override
     public void onClick(View v) {

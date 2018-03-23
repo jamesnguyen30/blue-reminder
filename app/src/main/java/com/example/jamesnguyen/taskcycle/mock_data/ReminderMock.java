@@ -1,6 +1,6 @@
 package com.example.jamesnguyen.taskcycle.mock_data;
 
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Created by jamesnguyen on 3/16/18.
@@ -8,11 +8,17 @@ import java.util.Date;
 
 public class ReminderMock {
     private String title;
-    private Date reminderDate;
+    //private Date reminderDate;
+    private Calendar calendar;
 
     public ReminderMock(String title) {
         this.title = title;
-        reminderDate = new Date();
+        calendar = Calendar.getInstance();
+    }
+
+    public ReminderMock(String title, Calendar calendar) {
+        this.title = title;
+        this.calendar = calendar;
     }
 
     public String getTitle() {
@@ -23,12 +29,11 @@ public class ReminderMock {
         this.title = title;
     }
 
-    public Date getReminderDate() {
-        return reminderDate;
+    public Calendar getCalendar() {
+        return calendar;
     }
 
-    public void setReminderDate(Date reminderDate) {
-        this.reminderDate = reminderDate;
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
     }
-
 }

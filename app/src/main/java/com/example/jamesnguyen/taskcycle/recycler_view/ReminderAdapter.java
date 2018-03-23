@@ -42,5 +42,4 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
     public int getItemCount() {
         return database.getDbSize();
     }
-
 }

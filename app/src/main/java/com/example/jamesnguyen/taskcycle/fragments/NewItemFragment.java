@@ -27,6 +27,7 @@ import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.smart_date_detector.MatchedPosition;
 import com.example.jamesnguyen.taskcycle.smart_date_detector.SmartDateDetector;
 
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -39,7 +40,8 @@ public class NewItemFragment extends Fragment {
     public interface OnNewItemCreated{
         //TODO pass an Item object here,
         // pass a mock object for now
-        void onNewItemCreated(String itemName);
+        //void onNewItemCreated(String itemName);
+        void onNewItemCreated(String title, Calendar calendar);
     }
     SpannableStringBuilder spanBuilder;
     FloatingActionButton fab;
@@ -115,10 +117,11 @@ public class NewItemFragment extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 switch(actionId){
                     case EditorInfo.IME_ACTION_DONE:
-                        //TODO add new item with the information
-                        //Log.d("NewFragment", v.getText().toString());
-                        mCallback.onNewItemCreated(v.getText().toString());
-                        //remove this fragment from Support Fragment Manager
+                        mCallback.onNewItemCreated(
+                                removeDateFromString(v.getText().toString()
+                                        , dateDetector.getMatchedPositions()),
+                                dateDetector.convertToCalendar()
+                        );
                         getActivity().getSupportFragmentManager().popBackStack();
                         return false;
                     default:
@@ -128,7 +131,6 @@ public class NewItemFragment extends Fragment {
         });
 
         return view;
-
     }
 
     public static NewItemFragment newInstance(){
@@ -149,46 +151,19 @@ public class NewItemFragment extends Fragment {
     }
 //
     private void buildSpannables(Editable e, List<MatchedPosition> matchedPositions){
-
         for(MatchedPosition pos : matchedPositions){
             buildSpannable(e, pos.getStartPos(), pos.getEndPos());
         }
 
     }
+
+    private String removeDateFromString(String original, List<MatchedPosition> matchedPositions){
+        StringBuilder builder = new StringBuilder(original);
+        int offset = 0;
+        for(MatchedPosition pos : matchedPositions){
+            builder.replace(pos.getStartPos() - offset, pos.getEndPos() - offset, "");
+            offset = pos.getEndPos() - pos.getStartPos();
+        }
+        return builder.toString();
+    }
 }
-
-//
-
-//    StyleSpan defaultStyleSpan;
-//    ForegroundColorSpan defaultForegroundColorSpan;
-//    BackgroundColorSpan defaultBackgroundColorSpace;
-
-//    Spannable defaultStyle;
-
-//        defaultStyleSpan = new StyleSpan(Typeface.NORMAL);
-//        defaultForegroundColorSpan = new ForegroundColorSpan(getResources().getColor(R.color.black));
-//        defaultBackgroundColorSpace = new BackgroundColorSpan(getResources().getColor(R.color.backgroundInputField));
-
-//
-//    private SpannableStringBuilder buildSpannables(SpannableStringBuilder builder, List<MatchedPosition> matchedPositions){
-//        builder= new SpannableStringBuilder();
-//        for(MatchedPosition pos : matchedPositions){
-//            buildSpannable(builder, pos.getStartPos(), pos.getEndPos());
-//        }
-//        return builder;
-//    }
-
-
-////    private void resetSpans(Editable e){
-////        Log.d(getTag(), "reseted span");
-////        e.setSpan(new StyleSpan(Typeface.NORMAL),0,e.length(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-////        e.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.black)),0,e.length(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-////        e.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.backgroundInputField)),0,e.length(),Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-////
-////    }
-//
-//    private void buildSpannable(SpannableStringBuilder builder, int start, int end){
-//        builder.setSpan(new StyleSpan(Typeface.BOLD),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        builder.setSpan(new ForegroundColorSpan( getResources().getColor(R.color.white)),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        builder.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.orange)),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//    }
