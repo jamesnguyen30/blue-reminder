@@ -10,4 +10,8 @@
     <color name="white">#FFFFFF</color>
     <color name="aquamarine">#6DA34D</color>
     <color name="backgroundInputField">#F5F9E9</color>
+    <color name="platinum">#DFE0E2</color>
+    <color name="yellow_green">#9FCC2E</color>
+    <color name="grey">#ACBDBA</color>
+
 </resources>

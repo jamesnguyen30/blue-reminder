@@ -41,7 +41,7 @@ public class NewItemFragment extends Fragment {
         //TODO pass an Item object here,
         // pass a mock object for now
         //void onNewItemCreated(String itemName);
-        void onNewItemCreated(String title, Calendar calendar);
+        void onNewItemCreated(String title, Calendar calendar, boolean hasDate, boolean hasTime);
     }
     SpannableStringBuilder spanBuilder;
     FloatingActionButton fab;
@@ -120,7 +120,9 @@ public class NewItemFragment extends Fragment {
                         mCallback.onNewItemCreated(
                                 removeDateFromString(v.getText().toString()
                                         , dateDetector.getMatchedPositions()),
-                                dateDetector.convertToCalendar()
+                                dateDetector.convertToCalendar(),
+                                dateDetector.isHasDate(),
+                                dateDetector.isHasTime()
                         );
                         getActivity().getSupportFragmentManager().popBackStack();
                         return false;
@@ -143,13 +145,15 @@ public class NewItemFragment extends Fragment {
         fab.setVisibility(View.VISIBLE);
     }
 
+
+
     private void buildSpannable(Editable e,int start, int end){
-        //spannable  =new SpannableString(e);
+
         e.setSpan(new StyleSpan(Typeface.BOLD),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         e.setSpan(new ForegroundColorSpan( getResources().getColor(R.color.white)),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         e.setSpan(new BackgroundColorSpan(getResources().getColor(R.color.orange)),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
-//
+
     private void buildSpannables(Editable e, List<MatchedPosition> matchedPositions){
         for(MatchedPosition pos : matchedPositions){
             buildSpannable(e, pos.getStartPos(), pos.getEndPos());

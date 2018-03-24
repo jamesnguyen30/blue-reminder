@@ -11,14 +11,28 @@ public class ReminderMock {
     //private Date reminderDate;
     private Calendar calendar;
 
+    private boolean hasDate;
+    private boolean hasTime;
+
     public ReminderMock(String title) {
         this.title = title;
         calendar = Calendar.getInstance();
+        hasDate = false;
+        hasTime = false;
     }
 
     public ReminderMock(String title, Calendar calendar) {
         this.title = title;
         this.calendar = calendar;
+        hasDate = false;
+        hasTime = false;
+    }
+
+    public ReminderMock(String title, Calendar calendar, boolean hasDate, boolean hasTime) {
+        this.title = title;
+        this.calendar = calendar;
+        this.hasDate = hasDate;
+        this.hasTime = hasTime;
     }
 
     public String getTitle() {
@@ -35,5 +49,21 @@ public class ReminderMock {
 
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
+    }
+
+    public boolean isHasDate() {
+        return hasDate;
+    }
+
+    public void setHasDate(boolean hasDate) {
+        this.hasDate = hasDate;
+    }
+
+    public boolean isHasTime() {
+        return hasTime;
+    }
+
+    public void setHasTime(boolean hasTime) {
+        this.hasTime = hasTime;
     }
 }

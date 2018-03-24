@@ -110,12 +110,14 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
 
     //Callback get called when NewItemFragment done entering the item creation
     @Override
-    public void onNewItemCreated(String itemName, Calendar calendar) {
-        Log.d(getLocalClassName(), itemName);
-        testEncapsulation(new ReminderMock(itemName, calendar));
+    public void onNewItemCreated(String itemName, Calendar calendar, boolean hasDate, boolean hasTime) {
+        //Log.d(getLocalClassName(), itemName);
+        ReminderMock newItem = new ReminderMock(itemName, calendar, hasDate, hasTime);
+        testEncapsulation(newItem);
         //tell the reminder fragment to update its dataset
         ReminderFragment fragment = (ReminderFragment)getSupportFragmentManager()
                 .findFragmentByTag(ReminderFragment.TAG);
+
         fragment.updateDatabase();
 
     }

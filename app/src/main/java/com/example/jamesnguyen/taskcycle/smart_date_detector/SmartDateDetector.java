@@ -24,6 +24,9 @@ public class SmartDateDetector {
     private Calendar calendar;
     private String[] groups;
 
+    private boolean hasDate;
+    private boolean hasTime;
+
     ArrayList<MatchedPosition> matchedPositions;
 
     private String originalText;
@@ -31,10 +34,14 @@ public class SmartDateDetector {
     public SmartDateDetector(String originalText) {
         this.originalText = originalText.toLowerCase();
         matchedPositions = new ArrayList<MatchedPosition>();
+        hasDate = false;
+        hasTime = false;
     }
 
     public SmartDateDetector() {
         matchedPositions = new ArrayList<MatchedPosition>();
+        hasDate = false;
+        hasTime = false;
     }
 
     public void setOriginalText(String originalText){
@@ -63,12 +70,14 @@ public class SmartDateDetector {
         matcher = pattern.matcher(originalText);
         groups = new String[matcher.groupCount()+1];
         matchedPositions.clear();
+        hasDate = false;
+        hasTime = false;
         MatchedPosition matchedPosition;
         boolean isFound = false;
         while(matcher.find()){
             for(int i =0;i<=matcher.groupCount();i++){
                 if(matcher.group(i)!=null){
-                    groups[i] = matcher.group(i).replaceAll("\\s","");
+                    groups[i] = matcher.group(i);
                 }
             }
             matchedPosition = new MatchedPosition(matcher.start(),matcher.end());
@@ -105,6 +114,8 @@ public class SmartDateDetector {
         } else{
             //get the date
             if(groups[5]!=null){
+                //set has date;
+                hasDate = true;
                 month = getMonthCodeByName( groups[5]);
 
                 if(groups[6]!=null){
@@ -115,6 +126,7 @@ public class SmartDateDetector {
                     year = Integer.parseInt(groups[7]);
                 }
             } else if(groups[9]!=null){
+                hasDate = true;
                 month = Integer.parseInt(groups[9])-1; // the Calendar.MONTH starts with 0 for January, you need to -1 to get the correct month
                 if(groups[10]!=null){
                     day = Integer.parseInt(groups[10]);
@@ -126,6 +138,7 @@ public class SmartDateDetector {
 
             //get the time
             if(groups[13]!=null){
+                hasTime = true;
                 hour = Integer.parseInt(groups[13]);
                 if(groups[15]!=null){
                     minute = Integer.parseInt(groups[15]);
@@ -143,7 +156,7 @@ public class SmartDateDetector {
             setDayByPhrase(calendar, groups[1]);
         } else if(groups[3]!=null){ //if day is already set, ignore group 3
             boolean isNextWeek = false;
-            if(groups[2]!=null && groups[2].equals("next"))
+            if(groups[2]!=null && groups[2].replaceAll("\\s","").equals("next"))
                 isNextWeek = true;
             calendar.add(Calendar.DAY_OF_WEEK, daysToIncreaseTo(calendar.get(Calendar.DAY_OF_WEEK),groups[3], isNextWeek));
         }
@@ -155,7 +168,10 @@ public class SmartDateDetector {
 
         if( phrase ==null || phrase.equals("today")|| phrase.length()<=0){
             return;
+        } else{
+            hasDate = true;
         }
+
         if (phrase.equals("tomorrow")) {
             calendar.add(Calendar.DAY_OF_WEEK, 1); // day of week = 2 is monday
         } else if(phrase.equals("next week")){ // to monday of next week
@@ -212,6 +228,7 @@ public class SmartDateDetector {
     //PASSED SOME TEST
     private int daysToIncreaseTo(int today, String dayOfWeek, boolean isNextWeek){
         int setDay = 0;
+        hasDate = true;
         if (dayOfWeek.equals("sunday") || dayOfWeek.equals("sun")) {
             setDay =1;
         } else if (dayOfWeek.equals("monday") || dayOfWeek.equals("mon")) {
@@ -243,6 +260,14 @@ public class SmartDateDetector {
                 return (setDay+7) - today;
             return setDay - today;
         }
+    }
+
+    public boolean isHasDate() {
+        return hasDate;
+    }
+
+    public boolean isHasTime() {
+        return hasTime;
     }
 
     private void print(String st){
