@@ -1,21 +1,14 @@
 package com.example.jamesnguyen.taskcycle;
 
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
@@ -27,6 +20,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity implements NewItemFragment.OnNewItemCreated {
 
     FloatingActionButton fab;
+    FloatingActionButton startTask;
     //mock database
     ReminderDatabaseMock database;
 
@@ -44,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
         //get the floating add button
 
         fab = findViewById(R.id.fab);
+        startTask = findViewById(R.id.start_task);
 
         //inflate the fragment
 
@@ -73,6 +68,13 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
                         .add(R.id.main_activity_container, newFragment, NewItemFragment.TAG)
                         .addToBackStack(ReminderFragment.TAG)
                         .commit();
+            }
+        });
+
+        startTask.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -117,9 +119,7 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
         //tell the reminder fragment to update its dataset
         ReminderFragment fragment = (ReminderFragment)getSupportFragmentManager()
                 .findFragmentByTag(ReminderFragment.TAG);
-
         fragment.updateDatabase();
-
     }
 
     public void testEncapsulation(ReminderMock e){
