@@ -45,6 +45,7 @@ public class NewItemFragment extends Fragment {
     }
     SpannableStringBuilder spanBuilder;
     FloatingActionButton fab;
+    FloatingActionButton workCycleButton;
     EditText mEditText;
     OnNewItemCreated mCallback;
     SmartDateDetector dateDetector = new SmartDateDetector();
@@ -79,6 +80,8 @@ public class NewItemFragment extends Fragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         fab = (FloatingActionButton)container.getRootView().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
+        workCycleButton = (FloatingActionButton)container.getRootView().findViewById(R.id.work_cycle_button);
+        workCycleButton.setVisibility(View.INVISIBLE);
         mEditText =(EditText)view.findViewById(R.id.new_reminder_input);
 
         //show keyboard
@@ -143,11 +146,10 @@ public class NewItemFragment extends Fragment {
     public void onPause() {
         super.onPause();
         fab.setVisibility(View.VISIBLE);
+        workCycleButton.setVisibility(View.VISIBLE);
     }
 
-
-
-    private void buildSpannable(Editable e,int start, int end){
+    private void buildSpannable(Editable e, int start, int end){
 
         e.setSpan(new StyleSpan(Typeface.BOLD),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         e.setSpan(new ForegroundColorSpan( getResources().getColor(R.color.white)),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

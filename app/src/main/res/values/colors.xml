@@ -13,6 +13,8 @@
     <color name="backgroundInputField">#F5F9E9</color>
     <color name="platinum">#DFE0E2</color>
     <color name="yellow_green">#9FCC2E</color>
-    <color name="grey">#ACBDBA</color>
+    <color name="grey">#acbdba</color>
+    <color name="transparent_grey">#d9acbdba</color>
+
 
 </resources>

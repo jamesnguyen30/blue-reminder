@@ -1,5 +1,8 @@
-package com.example.jamesnguyen.taskcycle;
+package com.example.jamesnguyen.taskcycle.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,8 +13,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.broadcast_receivers.AlarmReceiver;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
+import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
+import com.example.jamesnguyen.taskcycle.fragments.WorkCycleFragment;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderMock;
 
@@ -20,7 +27,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity implements NewItemFragment.OnNewItemCreated {
 
     FloatingActionButton fab;
-    FloatingActionButton startTask;
+    FloatingActionButton workCycleButton;
     //mock database
     ReminderDatabaseMock database;
 
@@ -29,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //test broadcast receiver
+        //startAlarm(5);
         //Instantiate the database
         database = new ReminderDatabaseMock();
         database.populateMockDatbase();
@@ -38,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
         //get the floating add button
 
         fab = findViewById(R.id.fab);
-        startTask = findViewById(R.id.start_task);
+        workCycleButton = findViewById(R.id.work_cycle_button);
 
         //inflate the fragment
 
@@ -71,10 +80,15 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
             }
         });
 
-        startTask.setOnClickListener(new View.OnClickListener(){
+        workCycleButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-
+                WorkCycleFragment workCycleFragment = WorkCycleFragment.getInstance();
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.main_activity_container, workCycleFragment, WorkCycleFragment.TAG)
+                        .addToBackStack(ReminderFragment.TAG)
+                        .commit();
             }
         });
     }
@@ -104,6 +118,14 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            //Intent setting = new Intent(this, SettingActivity.class);
+            //startActivity(setting);
+            SettingFragment newFragment = SettingFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_activity_container, newFragment, SettingFragment.TAG)
+                    .addToBackStack(ReminderFragment.TAG)
+                    .commit();
+
             return true;
         }
 
@@ -135,5 +157,13 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
         //but for mock database which needs to be persisted
         // through screen conf changes
 
+    }
+
+    public void startAlarm(int seconds){
+        long currentTime = System.currentTimeMillis();
+        Intent intent =new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + seconds*1000, pendingIntent);
     }
 }

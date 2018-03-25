@@ -2,18 +2,14 @@ package com.example.jamesnguyen.taskcycle.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.jamesnguyen.taskcycle.MainActivity;
+import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
@@ -27,7 +23,14 @@ public class ReminderFragment extends Fragment {
     public static final String DATABASE_REF_ARGUMENT = "db_ref_argument";
     RecyclerView mRecyclerView;
     ReminderAdapter mReminderAdapter;
+
     //TODO database reference
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
     @Nullable
     @Override
