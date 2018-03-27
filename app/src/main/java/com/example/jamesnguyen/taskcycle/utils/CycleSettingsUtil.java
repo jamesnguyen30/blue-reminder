@@ -1,4 +1,4 @@
-package com.example.jamesnguyen.taskcycle.setting_utils;
+package com.example.jamesnguyen.taskcycle.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,11 +11,6 @@ import com.example.jamesnguyen.taskcycle.R;
 //this class retrieve shared preference file of the activity
     // to perform save and load data from the file
 public class CycleSettingsUtil {
-
-    private final String SP_WORK_LENGTH_KEY = "sp_work_length_key";
-    private final String SP_SHORT_BREAK_LENGTH_KEY = "sp_work_length_key";
-    private final String SP_LONG_BREAK_LENGTH_KEY = "sp_short_break_length_key";
-
     private final String SP_FILE_NAME = "sp_cycle_settings";
 
     private final int DEFAULT_WORK_TIME = 2700; // 45 mins
@@ -24,6 +19,7 @@ public class CycleSettingsUtil {
 
     SharedPreferences sp;
     SharedPreferences.Editor editor;
+
 
     Context context;
 

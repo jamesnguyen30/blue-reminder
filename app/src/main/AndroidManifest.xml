@@ -27,6 +27,10 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".services.RunningWorkCycleService"
+            android:exported="false">
+
+        </service>
         <receiver
             android:name=".broadcast_receivers.AlarmReceiver">
         </receiver>

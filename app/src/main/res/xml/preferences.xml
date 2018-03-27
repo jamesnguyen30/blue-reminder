@@ -5,9 +5,25 @@
   <PreferenceCategory
       android:title="@string/cycle_settings_preferences_title">
       <EditTextPreference
-          android:title="Check Box"
-          android:key="edit_text">
-
+          android:title="Work Time"
+          android:key="@string/sp_work_length_key"
+          android:defaultValue="45"
+          >
       </EditTextPreference>
+
+      <EditTextPreference
+          android:title="Short Break"
+          android:key="@string/sp_short_break_key"
+          android:defaultValue="15"
+          >
+      </EditTextPreference>
+
+      <EditTextPreference
+          android:title="Long Break"
+          android:key="@string/sp_long_break_key"
+          android:defaultValue="60"
+          >
+      </EditTextPreference>
+
   </PreferenceCategory>
 </PreferenceScreen>

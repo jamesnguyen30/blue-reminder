@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
     //mock database
     ReminderDatabaseMock database;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
                 WorkCycleFragment workCycleFragment = WorkCycleFragment.getInstance();
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.main_activity_container, workCycleFragment, WorkCycleFragment.TAG)
+                        .replace(R.id.main_activity_container, workCycleFragment, WorkCycleFragment.TAG)
                         .addToBackStack(ReminderFragment.TAG)
                         .commit();
             }
@@ -159,11 +160,4 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
 
     }
 
-    public void startAlarm(int seconds){
-        long currentTime = System.currentTimeMillis();
-        Intent intent =new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, currentTime + seconds*1000, pendingIntent);
-    }
 }

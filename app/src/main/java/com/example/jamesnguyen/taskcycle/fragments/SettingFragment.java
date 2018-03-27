@@ -2,9 +2,7 @@ package com.example.jamesnguyen.taskcycle.fragments;
 
 import android.os.Bundle;
 
-import android.preference.PreferenceFragment;
 import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.annotation.Nullable;
 
 import com.example.jamesnguyen.taskcycle.R;
 
@@ -20,12 +18,7 @@ public class SettingFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.preferences);
     }
-//
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        addPreferencesFromResource(R.xml.preferences);
-//    }
+
 
     public static SettingFragment newInstance(){
         return new SettingFragment();

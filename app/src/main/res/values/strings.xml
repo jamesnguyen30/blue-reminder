@@ -2,11 +2,18 @@
     <string name="app_name">TaskCycle</string>
     <string name="action_settings">Settings</string>
 
-    <!--Default Shared Preferences -->
+    <!--Notification Channel-->
+    <string name="channel_name">time_over_notification</string>
+    <string name="channel_description">Show notification when a period in a cycle is over</string>
+
+    <!--Default Shared Preferences Keys-->
     <string name="sp_work_length_key">sp_work_length_key</string>
     <string name="sp_short_break_key">sp_work_length_key</string>
     <string name="sp_long_break_key">sp_short_break_length_key</string>
 
+    <!--Time picker preference-->
+    <string name="timer_picker_positive_button">Set</string>
+    <string name="timer_picker_negative_button">Cancel</string>
     <!--Settings Preferences-->
     <string name="settings_label">Settings</string>
     <string name="cycle_settings_preferences_title">Cycle Settings</string>

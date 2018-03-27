@@ -17,5 +17,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 //        vibrator.vibrate(5000);
 
         Log.d("AlarmReceiver","Alarm went off");
+
     }
 }
