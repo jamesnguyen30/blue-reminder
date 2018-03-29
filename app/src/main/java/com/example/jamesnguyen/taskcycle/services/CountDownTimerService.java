@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.broadcast_receivers.CountDownTimerReceiver;
 import com.example.jamesnguyen.taskcycle.notification_builder.NotificationBuilder;
 import com.example.jamesnguyen.taskcycle.utils.TimeUnitUtil;
@@ -26,7 +27,7 @@ public class CountDownTimerService extends Service {
 
     //intent action
     public static final String SERVICE_ACTION = "count_down_time_service_action";
-    //this extra is for the Main Activty
+
     public static final String MILLIS_UNTIL_FINISHED_EXTRA = "millis_until_finished";
 
     //private static final String SERVICE_NAME = "CountDownTimerService";
@@ -35,10 +36,8 @@ public class CountDownTimerService extends Service {
 
     private static final int ON_GOING_NOTIFICATION_ID = 1;
 
-    //PendingIntent pendingIntent;
     CountDownTimer timer;
     Intent intentToSend;
-    PendingIntent pendingIntent;
 
     NotificationCompat.Builder notificationBuilder;
     NotificationManagerCompat notificationManager;
@@ -57,11 +56,6 @@ public class CountDownTimerService extends Service {
 
         //TODO : get this from SharedPreference instead
         millisUntilFinished = intent.getLongExtra(MILLIS_EXTRA_TAG, -1);
-        //int seconds;
-
-        intentToSend = intent;
-        pendingIntent = PendingIntent.getActivity(this, 0 , intent, 0);
-
 
         notificationBuilder = NotificationBuilder.buildNotification(
                 this,
@@ -87,10 +81,9 @@ public class CountDownTimerService extends Service {
     @Override
     public void onDestroy() {
         timer.cancel();
-        //Log.d("CountDownTimerService", "Service Stopped");
+        Log.d("CountDownTimerService", "Service Stopped");
         broadcastMillisUntilFinished();
         super.onDestroy();
-
     }
 
     public static Intent createIntent(Context context, long millsUntilFinished) {
@@ -109,15 +102,7 @@ public class CountDownTimerService extends Service {
             public void onTick(long millisUntilFinished) {
 
                 setMillisUntilFinished(millisUntilFinished);
-                //TODO Update intentToSend
-                intentToSend.putExtra(MILLIS_UNTIL_FINISHED_EXTRA, millisUntilFinished);
-                pendingIntent = PendingIntent.getActivity( getBaseContext(), 0, intentToSend, 0);
-
-                //Log.d("CountDownTimerService", "Remaining " + Long.toString(millisUntilFinished / 1000));
                 notificationBuilder.setContentTitle(TimeUnitUtil.parseTime(millisUntilFinished));
-                notificationBuilder.setContentIntent(pendingIntent);
-
-                //Log.d("HEre", Long.toString(millisUntilFinished));
                 notificationManager.notify(ON_GOING_NOTIFICATION_ID, notificationBuilder.build());
                 setMillisUntilFinished(millisUntilFinished);
             }

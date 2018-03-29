@@ -2,7 +2,6 @@ package com.example.jamesnguyen.taskcycle.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.jamesnguyen.taskcycle.R;
-import com.example.jamesnguyen.taskcycle.broadcast_receivers.CountDownTimerReceiver;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
 import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
@@ -26,7 +24,7 @@ import com.example.jamesnguyen.taskcycle.services.CountDownTimerService;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements
-        NewItemFragment.OnNewItemCreated, WorkCycleFragment.OnTimerRunning {
+        NewItemFragment.OnNewItemCreated, WorkCycleFragment.OnTimerService {
 
     FloatingActionButton fab;
     FloatingActionButton workCycleButton;
@@ -41,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements
     public static final int START_WORK_CYCLE_FRAGMENT = 1;
     public static final int START_NEW_ITEM_FRAGMENT = 2;
     public static final int START_SETTING_FRAGMNENT = 3;
-    private Intent countDownTimterServiceIntent;
 
 
     @Override
@@ -49,28 +46,26 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int fragmentCode = getIntent().getIntExtra(FRAGMENT_CODE_EXTRA, 0);
-
         database = new ReminderDatabaseMock();
         database.populateMockDatbase();
 
         fab = findViewById(R.id.fab);
         workCycleButton = findViewById(R.id.work_cycle_button);
 
-        //inflate the fragment
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        Fragment fragment = ReminderFragment.newInstance();
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.main_activity_container, fragment, ReminderFragment.TAG)
-                .commit();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(ReminderFragment.TAG);
+        if(fragment==null){
+            fragment = ReminderFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.main_activity_container, fragment, ReminderFragment.TAG)
+                    .commit();
+        }
+        int fragmentCode = getIntent().getIntExtra(FRAGMENT_CODE_EXTRA, 0);
 
         if(fragmentCode!=0){
             startFragmentWithBackStack(fragmentCode, ADD_FLAG, null );
         }
-
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -83,16 +78,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void onClick(View v) {
                 //TODO stop CountDownTimerService and get the current millisUntilFinished
-                //TODO and send argument to the fragment as well
-                //Bundle args = WorkCycleFragment.createMillisUntilFinishedArgument(1000);
-
-                //long millisUntilFinished = mReciever.getMillisUntilFinished();
-                //Bundle args = WorkCycleFragment.createMillisUntilFinishedArgument(millisUntilFinished);
                 startFragmentWithBackStack(START_WORK_CYCLE_FRAGMENT, REPLACE_FLAG, null);
-                if(countDownTimterServiceIntent!=null) {
-                    stopService(countDownTimterServiceIntent);
-                    countDownTimterServiceIntent = null;
-                }
             }
         });
     }
@@ -103,20 +89,15 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+       if (id == R.id.action_settings) {
             startFragmentWithBackStack(START_SETTING_FRAGMNENT, REPLACE_FLAG, null );
             return true;
         }
@@ -133,43 +114,29 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        //save the database reference,
-        // for sqlite database implementation,
-        //we don't need database object to hold the data
-        //but for mock database which needs to be persisted
-        // through screen conf changes
-        //TODO Start count down timer service here
-        //TODO Load millisUntilFinished and pass to count down services
-
-    }
-
-
-    @Override
     protected void onDestroy() {
-       // unregisterTimeReciever();
         super.onDestroy();
-
     }
 
-
-    //Callback get called when NewItemFragment done entering the item creation
     @Override
     public void onNewItemCreated(String itemName, Calendar calendar, boolean hasDate, boolean hasTime) {
-        //Log.d(getLocalClassName(), itemName);
         ReminderMock newItem = new ReminderMock(itemName, calendar, hasDate, hasTime);
         testEncapsulation(newItem);
-        //tell the reminder fragment to update its dataset
+
         ReminderFragment fragment = (ReminderFragment)getSupportFragmentManager()
                 .findFragmentByTag(ReminderFragment.TAG);
         fragment.updateDatabase();
     }
 
     @Override
-    public void onRunning(long millisUntilFinished) {
+    public void startTimerService(long millisUntilFinished) {
         //TODO start count down service here
         startCountDownService(millisUntilFinished);
+    }
+
+    @Override
+    public void stopTimerService() {
+        stopCountDownService();
     }
 
     public static Intent createIntent(Context context, int fragmentCode){
@@ -222,9 +189,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void startCountDownService(long millisUntilFinished){
-        countDownTimterServiceIntent =
+        Intent intent =
                 CountDownTimerService.createIntent(this,millisUntilFinished);
-        startService(countDownTimterServiceIntent);
+        startService(intent);
+    }
+
+    public void stopCountDownService(){
+        Intent intent = new Intent(this, CountDownTimerService.class);
+        stopService(intent);
     }
 
 }

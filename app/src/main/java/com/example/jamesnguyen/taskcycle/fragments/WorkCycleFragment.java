@@ -17,7 +17,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.jamesnguyen.taskcycle.R;
-import com.example.jamesnguyen.taskcycle.broadcast_receivers.CountDownTimerReceiver;
 import com.example.jamesnguyen.taskcycle.controllers.AlarmController;
 import com.example.jamesnguyen.taskcycle.services.CountDownTimerService;
 import com.example.jamesnguyen.taskcycle.utils.CycleSettingsUtil;
@@ -29,10 +28,10 @@ import com.example.jamesnguyen.taskcycle.utils.TimeUnitUtil;
 
 public class WorkCycleFragment extends Fragment {
 
-
     public static String MILLIS_UNTIL_FINISHED_ARG = "millis_until_finished_arg";
-    public interface OnTimerRunning {
-        void onRunning(long millisUntilFinished);
+    public interface OnTimerService {
+        void startTimerService(long millisUntilFinished);
+        void stopTimerService();
     }
     public static final String TAG = "WorkCycleFragment";
 
@@ -54,8 +53,7 @@ public class WorkCycleFragment extends Fragment {
     AlarmController alarmController;
     CycleSettingsUtil settingsUtil;
     TextView remainingTimeTextView;
-    OnTimerRunning mCallback;
-
+    OnTimerService mCallback;
 
     boolean isPaused;
     long milliUntilFinished;
@@ -68,10 +66,10 @@ public class WorkCycleFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try{
-            mCallback = (OnTimerRunning) getActivity();
+            mCallback = (OnTimerService) getActivity();
         } catch(ClassCastException e){
             throw new ClassCastException(getActivity().getCallingPackage()
-                    + " must implement the OnTimerRunning");
+                    + " must implement the OnTimerService");
         }
     }
 
@@ -79,8 +77,6 @@ public class WorkCycleFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d("Fragment here", "Fragment");
         super.onCreate(savedInstanceState);
-//        mReceiver = new CountDownTimerReceiver();
-
         cycleSettingsUtil = new CycleSettingsUtil(getActivity());
         settingsUtil = new CycleSettingsUtil(getActivity());
         isPaused = true;
@@ -102,9 +98,9 @@ public class WorkCycleFragment extends Fragment {
         alarmController = new AlarmController();
 
         remainingTimeTextView = view.findViewById(R.id.remaining_time_text_view);
-        fab = (FloatingActionButton)container.getRootView().findViewById(R.id.fab);
+        fab = container.getRootView().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
-        workCycleButton = (FloatingActionButton)container.getRootView().findViewById(R.id.work_cycle_button);
+        workCycleButton = container.getRootView().findViewById(R.id.work_cycle_button);
         workCycleButton.setVisibility(View.INVISIBLE);
         updateRemainingTimeTextView(milliUntilFinished);
 
@@ -113,9 +109,6 @@ public class WorkCycleFragment extends Fragment {
         play.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //alarmController.startAlarm(getContext(), 10);
-                //start the activity only once
-                //update the remaining time text view
                 if(isPaused) {
                     startCountDownTimer(milliUntilFinished);
                 } else {
@@ -138,8 +131,12 @@ public class WorkCycleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        //TODO register for broadcast receiver here
         IntentFilter filter = CountDownTimerService.getIntentFilter();
         getActivity().registerReceiver(mReceiver, filter);
+        mCallback.stopTimerService();
+
     }
 
     @Override
@@ -147,14 +144,19 @@ public class WorkCycleFragment extends Fragment {
         super.onPause();
         getActivity().unregisterReceiver(mReceiver);
 
-        fab.setVisibility(View.VISIBLE);
-        workCycleButton.setVisibility(View.VISIBLE);
         //TODO save millsUntilFinished to Preference
         settingsUtil.saveMillsUntilFinished(milliUntilFinished);
         stopCountDownTimer();
         //TODO call on run interface
         if(!isPaused)
-            mCallback.onRunning(milliUntilFinished);
+            mCallback.startTimerService(milliUntilFinished);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        fab.setVisibility(View.VISIBLE);
+        workCycleButton.setVisibility(View.VISIBLE);
     }
 
     public void setMilliUntilFinished(long milliUntilFinished){
@@ -184,7 +186,6 @@ public class WorkCycleFragment extends Fragment {
     private void startCountDownTimer(final long milliseconds){
         if(milliseconds<=0){
             remainingTimeTextView.setText("DONE");
-//            settingsUtil.saveMillsUntilFinished(WORK_TIME*1000);
         }
         timer = new CountDownTimer(milliseconds, 1000) {
             @Override
@@ -198,7 +199,7 @@ public class WorkCycleFragment extends Fragment {
                 //TODO Ring the phone to notify it's done
 
                 remainingTimeTextView.setText("DONE");
-                //Reset the millisUntilFinished
+
                 setMilliUntilFinished(WORK_TIME*1000);
             }
         };
@@ -208,6 +209,12 @@ public class WorkCycleFragment extends Fragment {
     private void stopCountDownTimer(){
         if(timer!=null)
             timer.cancel();
+    }
+
+    public static Bundle createBundleMillisUntilFinished( long milliUntilFinished ){
+        Bundle args = new Bundle();
+        args.putLong(MILLIS_UNTIL_FINISHED_ARG, milliUntilFinished);
+        return args;
     }
 
 }
