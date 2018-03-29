@@ -1,8 +1,8 @@
 package com.example.jamesnguyen.taskcycle.activities;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -14,22 +14,34 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.jamesnguyen.taskcycle.R;
-import com.example.jamesnguyen.taskcycle.broadcast_receivers.AlarmReceiver;
+import com.example.jamesnguyen.taskcycle.broadcast_receivers.CountDownTimerReceiver;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
 import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
 import com.example.jamesnguyen.taskcycle.fragments.WorkCycleFragment;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderMock;
+import com.example.jamesnguyen.taskcycle.services.CountDownTimerService;
 
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity implements NewItemFragment.OnNewItemCreated {
+public class MainActivity extends AppCompatActivity implements
+        NewItemFragment.OnNewItemCreated, WorkCycleFragment.OnTimerRunning {
 
     FloatingActionButton fab;
     FloatingActionButton workCycleButton;
     //mock database
     ReminderDatabaseMock database;
+
+    private static final int ADD_FLAG = 0;
+    private static final int REPLACE_FLAG = 1;
+
+    private static final String FRAGMENT_CODE_EXTRA = "fragment_code_extra";
+    public static final int START_DEFAULT_FRAGMENT = 0;
+    public static final int START_WORK_CYCLE_FRAGMENT = 1;
+    public static final int START_NEW_ITEM_FRAGMENT = 2;
+    public static final int START_SETTING_FRAGMNENT = 3;
+    private Intent countDownTimterServiceIntent;
 
 
     @Override
@@ -37,15 +49,10 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //test broadcast receiver
-        //startAlarm(5);
-        //Instantiate the database
+        int fragmentCode = getIntent().getIntExtra(FRAGMENT_CODE_EXTRA, 0);
+
         database = new ReminderDatabaseMock();
         database.populateMockDatbase();
-
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
-        //get the floating add button
 
         fab = findViewById(R.id.fab);
         workCycleButton = findViewById(R.id.work_cycle_button);
@@ -55,49 +62,40 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment = ReminderFragment.newInstance();
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.main_activity_container, fragment, ReminderFragment.TAG)
+                .commit();
 
-        Fragment fragment = fm.findFragmentById(R.id.main_activity_container);
-
-        if(fragment==null){
-            //create ReminderFragment by default
-            fragment = createReminderFragment();
-            fm.beginTransaction()
-                    .add(R.id.main_activity_container, fragment, ReminderFragment.TAG)
-                    .commit();
+        if(fragmentCode!=0){
+            startFragmentWithBackStack(fragmentCode, ADD_FLAG, null );
         }
+
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //start new item fragment
-
-                NewItemFragment newFragment = NewItemFragment.newInstance();
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.main_activity_container, newFragment, NewItemFragment.TAG)
-                        .addToBackStack(ReminderFragment.TAG)
-                        .commit();
+                startFragmentWithBackStack(START_NEW_ITEM_FRAGMENT, ADD_FLAG, null );
             }
         });
 
         workCycleButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                WorkCycleFragment workCycleFragment = WorkCycleFragment.getInstance();
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.main_activity_container, workCycleFragment, WorkCycleFragment.TAG)
-                        .addToBackStack(ReminderFragment.TAG)
-                        .commit();
+                //TODO stop CountDownTimerService and get the current millisUntilFinished
+                //TODO and send argument to the fragment as well
+                //Bundle args = WorkCycleFragment.createMillisUntilFinishedArgument(1000);
+
+                //long millisUntilFinished = mReciever.getMillisUntilFinished();
+                //Bundle args = WorkCycleFragment.createMillisUntilFinishedArgument(millisUntilFinished);
+                startFragmentWithBackStack(START_WORK_CYCLE_FRAGMENT, REPLACE_FLAG, null);
+                if(countDownTimterServiceIntent!=null) {
+                    stopService(countDownTimterServiceIntent);
+                    countDownTimterServiceIntent = null;
+                }
             }
         });
     }
-
-    public ReminderFragment createReminderFragment(){
-
-        return new ReminderFragment();
-    };
 
     public ReminderDatabaseMock getDatabase(){
         return database;
@@ -119,19 +117,42 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            //Intent setting = new Intent(this, SettingActivity.class);
-            //startActivity(setting);
-            SettingFragment newFragment = SettingFragment.newInstance();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_activity_container, newFragment, SettingFragment.TAG)
-                    .addToBackStack(ReminderFragment.TAG)
-                    .commit();
-
+            startFragmentWithBackStack(START_SETTING_FRAGMNENT, REPLACE_FLAG, null );
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+    public void testEncapsulation(ReminderMock e){
+        database.addNewReminder(e);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //save the database reference,
+        // for sqlite database implementation,
+        //we don't need database object to hold the data
+        //but for mock database which needs to be persisted
+        // through screen conf changes
+        //TODO Start count down timer service here
+        //TODO Load millisUntilFinished and pass to count down services
+
+    }
+
+
+    @Override
+    protected void onDestroy() {
+       // unregisterTimeReciever();
+        super.onDestroy();
+
+    }
+
 
     //Callback get called when NewItemFragment done entering the item creation
     @Override
@@ -145,19 +166,65 @@ public class MainActivity extends AppCompatActivity implements NewItemFragment.O
         fragment.updateDatabase();
     }
 
-    public void testEncapsulation(ReminderMock e){
-        database.addNewReminder(e);
+    @Override
+    public void onRunning(long millisUntilFinished) {
+        //TODO start count down service here
+        startCountDownService(millisUntilFinished);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //save the database reference,
-        // for sqlite database implementation,
-        //we don't need database object to hold the data
-        //but for mock database which needs to be persisted
-        // through screen conf changes
+    public static Intent createIntent(Context context, int fragmentCode){
+        Intent intent = new Intent(context, MainActivity.class);
+        intent .putExtra(FRAGMENT_CODE_EXTRA, fragmentCode);
+        return intent;
+    }
 
+    private void startFragmentWithBackStack(int fragmentCode, int stackCode, Bundle argument){
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment fragment;
+        String tag;
+
+        switch(fragmentCode){
+            default:
+                fragment = ReminderFragment.newInstance();
+                tag = ReminderFragment.TAG;
+                break;
+            case 1:
+                fragment = WorkCycleFragment.newInstance();
+                tag = WorkCycleFragment.TAG;
+                break;
+            case 2:
+                fragment = NewItemFragment.newInstance();
+                tag = NewItemFragment.TAG;
+                break;
+            case 3:
+                fragment = SettingFragment.newInstance();
+                tag = SettingFragment.TAG;
+                break;
+        }
+
+        if(argument!=null){
+            fragment.setArguments(argument);
+        }
+        switch(stackCode){
+            default: // default back stack, ReminderFragment is the final element in the stack
+                fm.beginTransaction()
+                        .add(R.id.main_activity_container, fragment, tag)
+                        .addToBackStack(ReminderFragment.TAG)
+                        .commit();
+                break;
+            case 1:
+                fm.beginTransaction()
+                        .replace(R.id.main_activity_container, fragment, tag)
+                        .addToBackStack(ReminderFragment.TAG)
+                        .commit();
+                break;
+        }
+    }
+
+    public void startCountDownService(long millisUntilFinished){
+        countDownTimterServiceIntent =
+                CountDownTimerService.createIntent(this,millisUntilFinished);
+        startService(countDownTimterServiceIntent);
     }
 
 }

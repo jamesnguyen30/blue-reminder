@@ -7,13 +7,16 @@
     <string name="channel_description">Show notification when a period in a cycle is over</string>
 
     <!--Default Shared Preferences Keys-->
-    <string name="sp_work_length_key">sp_work_length_key</string>
-    <string name="sp_short_break_key">sp_work_length_key</string>
-    <string name="sp_long_break_key">sp_short_break_length_key</string>
+    <string name="shared_preference_file_name">shared_prefernce_for_cycle</string>
+    <string name="pref_millis_until_finished">millis_until_finished</string>
+    <string name="pref_work_length_key">sp_work_length_key</string>
+    <string name="pref_short_break_key">sp_work_length_key</string>
+    <string name="pref_long_break_key">sp_short_break_length_key</string>
 
     <!--Time picker preference-->
     <string name="timer_picker_positive_button">Set</string>
     <string name="timer_picker_negative_button">Cancel</string>
+
     <!--Settings Preferences-->
     <string name="settings_label">Settings</string>
     <string name="cycle_settings_preferences_title">Cycle Settings</string>

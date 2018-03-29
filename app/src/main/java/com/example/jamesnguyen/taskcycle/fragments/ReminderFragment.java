@@ -60,4 +60,8 @@ public class ReminderFragment extends Fragment {
         mReminderAdapter.notifyDataSetChanged();
     }
 
+    public static ReminderFragment newInstance(){
+        return new ReminderFragment();
+    }
+
 }

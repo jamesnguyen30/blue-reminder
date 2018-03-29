@@ -11,7 +11,7 @@ import com.example.jamesnguyen.taskcycle.R;
 //this class retrieve shared preference file of the activity
     // to perform save and load data from the file
 public class CycleSettingsUtil {
-    private final String SP_FILE_NAME = "sp_cycle_settings";
+    private String SP_FILE_NAME;
 
     private final int DEFAULT_WORK_TIME = 2700; // 45 mins
     private final int DEFAULT_SHORT_BREAK_TIME = 900; // 15 mins
@@ -20,12 +20,12 @@ public class CycleSettingsUtil {
     SharedPreferences sp;
     SharedPreferences.Editor editor;
 
-
     Context context;
 
 
     public CycleSettingsUtil(Context context) {
         this.context = context;
+        SP_FILE_NAME = context.getResources().getString(R.string.shared_preference_file_name);
         sp = context.getSharedPreferences(SP_FILE_NAME, Context.MODE_PRIVATE);
         editor = sp.edit();
     }
@@ -36,33 +36,43 @@ public class CycleSettingsUtil {
         editor= sp.edit();
     }
 
+    public void saveMillsUntilFinished(long timeInMills){
+        editor.putLong(context.getResources().getString(R.string.pref_millis_until_finished)
+                , timeInMills);
+        editor.commit();
+    }
+
     public void saveWorkTime(int timeInSecond){
-        editor.putInt(context.getResources().getString(R.string.sp_work_length_key)
+        editor.putInt(context.getResources().getString(R.string.pref_work_length_key)
                 , timeInSecond);
         editor.commit();
     }
 
     public void saveShortBreakTime(int timeInSecond){
-        editor.putInt(context.getResources().getString(R.string.sp_short_break_key),
+        editor.putInt(context.getResources().getString(R.string.pref_short_break_key),
                 timeInSecond);
         editor.commit();
     }
 
     public void saveLongBreakTime(int timeInSecond){
-        editor.putInt(context.getResources().getString(R.string.sp_long_break_key), timeInSecond);
+        editor.putInt(context.getResources().getString(R.string.pref_long_break_key), timeInSecond);
         editor.commit();
     }
 
+    public long getMillsUntilFinished(){
+        return sp.getLong(context.getResources().getString(R.string.pref_millis_until_finished), 0);
+    }
+
     public int getWorkTime(){
-        return sp.getInt(context.getResources().getString(R.string.sp_work_length_key), DEFAULT_WORK_TIME);
+        return sp.getInt(context.getResources().getString(R.string.pref_work_length_key), DEFAULT_WORK_TIME);
     }
 
     public int getShortBreakTime(){
-        return sp.getInt(context.getResources().getString(R.string.sp_short_break_key),DEFAULT_SHORT_BREAK_TIME);
+        return sp.getInt(context.getResources().getString(R.string.pref_short_break_key),DEFAULT_SHORT_BREAK_TIME);
     }
 
     public int getLongBreakTime(){
-        return sp.getInt(context.getResources().getString(R.string.sp_long_break_key),DEFAULT_LONG_BREAK_TIME);
+        return sp.getInt(context.getResources().getString(R.string.pref_long_break_key),DEFAULT_LONG_BREAK_TIME);
     }
 
 

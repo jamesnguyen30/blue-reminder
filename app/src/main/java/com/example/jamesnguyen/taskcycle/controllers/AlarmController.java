@@ -5,7 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.jamesnguyen.taskcycle.broadcast_receivers.AlarmReceiver;
+import com.example.jamesnguyen.taskcycle.broadcast_receivers.CountDownTimerReceiver;
 
 import static android.content.Context.ALARM_SERVICE;
 
@@ -19,7 +19,7 @@ public class AlarmController {
 
     public void startAlarm(Context context, int seconds){
         long currentTime = System.currentTimeMillis();
-        Intent intent =new Intent(context, AlarmReceiver.class);
+        Intent intent =new Intent(context, CountDownTimerReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context
                 , 1
                 , intent
