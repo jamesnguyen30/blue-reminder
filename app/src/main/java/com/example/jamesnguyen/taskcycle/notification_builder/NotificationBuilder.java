@@ -20,7 +20,7 @@ public class NotificationBuilder {
                                                                String contentTitle,
                                                                String contentDescription){
 
-        Intent intent = creatNewIntent(context, MainActivity.START_WORK_CYCLE_FRAGMENT);
+        Intent intent = creatNewIntent(context, MainActivity.START_DEFAULT_FRAGMENT);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         NotificationCompat.Builder builder =

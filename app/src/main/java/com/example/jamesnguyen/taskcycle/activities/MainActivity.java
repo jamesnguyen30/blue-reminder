@@ -16,18 +16,15 @@ import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
 import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
-import com.example.jamesnguyen.taskcycle.fragments.WorkCycleFragment;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
 import com.example.jamesnguyen.taskcycle.mock_data.ReminderMock;
-import com.example.jamesnguyen.taskcycle.services.CountDownTimerService;
 
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements
-        NewItemFragment.OnNewItemCreated, WorkCycleFragment.OnTimerService {
+        NewItemFragment.OnNewItemCreated{
 
     FloatingActionButton fab;
-    FloatingActionButton workCycleButton;
     //mock database
     ReminderDatabaseMock database;
 
@@ -36,9 +33,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String FRAGMENT_CODE_EXTRA = "fragment_code_extra";
     public static final int START_DEFAULT_FRAGMENT = 0;
-    public static final int START_WORK_CYCLE_FRAGMENT = 1;
-    public static final int START_NEW_ITEM_FRAGMENT = 2;
-    public static final int START_SETTING_FRAGMNENT = 3;
+    public static final int START_NEW_ITEM_FRAGMENT = 1;
+    public static final int START_SETTING_FRAGMNENT = 2;
 
 
     @Override
@@ -50,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements
         database.populateMockDatbase();
 
         fab = findViewById(R.id.fab);
-        workCycleButton = findViewById(R.id.work_cycle_button);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -61,24 +56,16 @@ public class MainActivity extends AppCompatActivity implements
                     .add(R.id.main_activity_container, fragment, ReminderFragment.TAG)
                     .commit();
         }
-        int fragmentCode = getIntent().getIntExtra(FRAGMENT_CODE_EXTRA, 0);
-
-        if(fragmentCode!=0){
-            startFragmentWithBackStack(fragmentCode, ADD_FLAG, null );
-        }
+//        int fragmentCode = getIntent().getIntExtra(FRAGMENT_CODE_EXTRA, 0);
+//
+//        if(fragmentCode!=0){
+//            startFragmentWithBackStack(fragmentCode, ADD_FLAG, null );
+//        }
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 startFragmentWithBackStack(START_NEW_ITEM_FRAGMENT, ADD_FLAG, null );
-            }
-        });
-
-        workCycleButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                //TODO stop CountDownTimerService and get the current millisUntilFinished
-                startFragmentWithBackStack(START_WORK_CYCLE_FRAGMENT, REPLACE_FLAG, null);
             }
         });
     }
@@ -128,17 +115,6 @@ public class MainActivity extends AppCompatActivity implements
         fragment.updateDatabase();
     }
 
-    @Override
-    public void startTimerService(long millisUntilFinished) {
-        //TODO start count down service here
-        startCountDownService(millisUntilFinished);
-    }
-
-    @Override
-    public void stopTimerService() {
-        stopCountDownService();
-    }
-
     public static Intent createIntent(Context context, int fragmentCode){
         Intent intent = new Intent(context, MainActivity.class);
         intent .putExtra(FRAGMENT_CODE_EXTRA, fragmentCode);
@@ -156,14 +132,10 @@ public class MainActivity extends AppCompatActivity implements
                 tag = ReminderFragment.TAG;
                 break;
             case 1:
-                fragment = WorkCycleFragment.newInstance();
-                tag = WorkCycleFragment.TAG;
-                break;
-            case 2:
                 fragment = NewItemFragment.newInstance();
                 tag = NewItemFragment.TAG;
                 break;
-            case 3:
+            case 2:
                 fragment = SettingFragment.newInstance();
                 tag = SettingFragment.TAG;
                 break;
@@ -186,17 +158,6 @@ public class MainActivity extends AppCompatActivity implements
                         .commit();
                 break;
         }
-    }
-
-    public void startCountDownService(long millisUntilFinished){
-        Intent intent =
-                CountDownTimerService.createIntent(this,millisUntilFinished);
-        startService(intent);
-    }
-
-    public void stopCountDownService(){
-        Intent intent = new Intent(this, CountDownTimerService.class);
-        stopService(intent);
     }
 
 }

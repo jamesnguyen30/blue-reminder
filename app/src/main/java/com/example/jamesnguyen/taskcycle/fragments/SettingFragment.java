@@ -1,7 +1,6 @@
 package com.example.jamesnguyen.taskcycle.fragments;
 
 import android.os.Bundle;
-
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.example.jamesnguyen.taskcycle.R;
@@ -18,7 +17,6 @@ public class SettingFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.preferences);
     }
-
 
     public static SettingFragment newInstance(){
         return new SettingFragment();

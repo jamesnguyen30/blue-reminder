@@ -24,6 +24,5 @@
           android:defaultValue="60"
           >
       </EditTextPreference>
-
   </PreferenceCategory>
 </PreferenceScreen>

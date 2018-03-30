@@ -146,7 +146,6 @@ public class NewItemFragment extends Fragment {
     public void onPause() {
         super.onPause();
         fab.setVisibility(View.VISIBLE);
-        workCycleButton.setVisibility(View.VISIBLE);
     }
 
     private void buildSpannable(Editable e, int start, int end){
