@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.R;
-import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
+import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 
 /**
  * Created by jamesnguyen on 3/16/18.
@@ -24,7 +24,7 @@ public class ReminderFragment extends Fragment {
     RecyclerView mRecyclerView;
     ReminderAdapter mReminderAdapter;
 
-    //TODO database reference
+    //TODO ItemDatabase reference
 
 
     @Override
@@ -44,19 +44,22 @@ public class ReminderFragment extends Fragment {
     }
 
     public void setReminderAdapter(){
-        //start the database adapter
-        //set up the database
+        //start the ItemDatabase adapter
+        //set up the ItemDatabase
         //this is a bad approach if you want your fragment to be
         //used independently from MainActivity
         //for this approach, this fragment only works
         //for MainActivity,
         //DELETE THIS COMMENT WHEN THERE'S A BETTER SOLUTION
-        ReminderDatabaseMock db = ((MainActivity)getActivity()).getDatabase();
+        //ReminderDatabaseMock db = ((MainActivity)getActivity()).getDatabase();
+        ItemDatabase db = ((MainActivity)getActivity()).getDatabase();
+
         mReminderAdapter = new ReminderAdapter(getActivity(),db);
         mRecyclerView.setAdapter(mReminderAdapter);
     }
 
     public void updateDatabase(){
+        mReminderAdapter.updateItemList();
         mReminderAdapter.notifyDataSetChanged();
     }
 

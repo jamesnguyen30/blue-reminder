@@ -16,18 +16,19 @@ import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
 import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
-import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
-import com.example.jamesnguyen.taskcycle.mock_data.ReminderMock;
+import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
+import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
 import java.util.Calendar;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements
         NewItemFragment.OnNewItemCreated{
 
     FloatingActionButton fab;
-    //mock database
-    ReminderDatabaseMock database;
-
+    //mock ItemDatabase
+//    ReminderDatabaseMock database;
+    ItemDatabase database;
     private static final int ADD_FLAG = 0;
     private static final int REPLACE_FLAG = 1;
 
@@ -41,26 +42,22 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        database = new ReminderDatabaseMock();
-        database.populateMockDatbase();
-
+//
+        database = ItemDatabase.getInstance(this);
+        //populate the database
+        //database.getItemDao().deleteAll();
+        //populateDb();
         fab = findViewById(R.id.fab);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ReminderFragment.TAG);
-        if(fragment==null){
+        if(fragment==null) {
             fragment = ReminderFragment.newInstance();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.main_activity_container, fragment, ReminderFragment.TAG)
                     .commit();
         }
-//        int fragmentCode = getIntent().getIntExtra(FRAGMENT_CODE_EXTRA, 0);
-//
-//        if(fragmentCode!=0){
-//            startFragmentWithBackStack(fragmentCode, ADD_FLAG, null );
-//        }
 
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -70,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
-    public ReminderDatabaseMock getDatabase(){
+    public ItemDatabase getDatabase(){
         return database;
     }
 
@@ -91,9 +88,6 @@ public class MainActivity extends AppCompatActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public void testEncapsulation(ReminderMock e){
-        database.addNewReminder(e);
-    }
 
     @Override
     protected void onResume() {
@@ -107,8 +101,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNewItemCreated(String itemName, Calendar calendar, boolean hasDate, boolean hasTime) {
-        ReminderMock newItem = new ReminderMock(itemName, calendar, hasDate, hasTime);
-        testEncapsulation(newItem);
+        //ReminderMock newItem = new ReminderMock(itemName, calendar, hasDate, hasTime);
+        //testEncapsulation(newItem);
+        ItemEntity item = new ItemEntity(itemName, calendar.getTimeInMillis(), hasDate, hasTime);
+        database.getItemDao().insert(item);
 
         ReminderFragment fragment = (ReminderFragment)getSupportFragmentManager()
                 .findFragmentByTag(ReminderFragment.TAG);
@@ -157,6 +153,20 @@ public class MainActivity extends AppCompatActivity implements
                         .addToBackStack(ReminderFragment.TAG)
                         .commit();
                 break;
+        }
+    }
+
+    public void populateDb(){
+        ItemEntity item;
+        String title;
+        long millis;
+        Random rand =new Random();
+
+        for(int i =0;i<5;i++){
+            title = "Item #"+Integer.toString(i);
+            millis = rand.nextInt(9999999)+1000000;
+            item = new ItemEntity(title, millis, true, false);
+            database.getItemDao().insert(item);
         }
     }
 

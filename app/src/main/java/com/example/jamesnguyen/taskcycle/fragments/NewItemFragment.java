@@ -80,8 +80,6 @@ public class NewItemFragment extends Fragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         fab = (FloatingActionButton)container.getRootView().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
-        workCycleButton = (FloatingActionButton)container.getRootView().findViewById(R.id.work_cycle_button);
-        workCycleButton.setVisibility(View.INVISIBLE);
         mEditText =(EditText)view.findViewById(R.id.new_reminder_input);
 
         //show keyboard

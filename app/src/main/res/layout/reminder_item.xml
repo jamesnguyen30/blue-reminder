@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/reminder_title"
-        android:layout_width="154dp"
+        android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginBottom="4dp"
         android:layout_marginStart="16dp"
@@ -33,7 +33,7 @@
         android:id="@+id/is_overdue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_marginEnd="24dp"
         android:text="Overdue"
         android:textColor="@android:color/holo_red_dark"

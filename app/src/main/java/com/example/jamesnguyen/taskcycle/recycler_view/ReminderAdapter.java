@@ -1,5 +1,6 @@
 package com.example.jamesnguyen.taskcycle.recycler_view;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,7 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.jamesnguyen.taskcycle.R;
-import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
+import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
+import com.example.jamesnguyen.taskcycle.room.ItemEntity;
+
+import java.util.List;
 
 /**
  * Created by jamesnguyen on 3/16/18.
@@ -15,31 +19,42 @@ import com.example.jamesnguyen.taskcycle.mock_data.ReminderDatabaseMock;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
 
-    //hold reference to the database
-    //this is a mock database
-    ReminderDatabaseMock database;
+    //hold reference to the ItemDatabase
+    //this is a mock ItemDatabase
+    //ReminderDatabaseMock ItemDatabase;
+    ItemDatabase db;
     Context context;
+    List<ItemEntity> items;
+    int count;
 
-    public ReminderAdapter(Context context, ReminderDatabaseMock db) {
+    public ReminderAdapter(Context context, ItemDatabase db) {
         this.context = context;
-        database = db;
+        this.db = db;
+        updateItemList();
     }
 
     @Override
     public ReminderViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.reminder_item, parent, false);
-
         return new ReminderViewHolder(view,context);
     }
 
     @Override
     public void onBindViewHolder(ReminderViewHolder holder, int position) {
-        holder.bindView(database.getReminderAt(position));
+        //holder.bindView(database.getReminderAt(position));
+        //ItemEntity item = db.getTodayItems().get(position);
+        holder.bindView(items.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return database.getDbSize();
+        return count;
+        //return database.getDbSize();
+    }
+
+    public void updateItemList(){
+        items = db.getTodayItems();
+        count = items.size();
     }
 }

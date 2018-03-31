@@ -26,14 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service android:name=".services.CountDownTimerService"
-            android:exported="false">
-
-        </service>
-        <!--<receiver-->
-            <!--android:name=".broadcast_receivers.CountDownTimerReceiver">-->
-        <!--</receiver>-->
     </application>
 
 </manifest>

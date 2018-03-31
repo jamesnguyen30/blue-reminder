@@ -45,7 +45,8 @@ public class SmartDateDetector {
     }
 
     public void setOriginalText(String originalText){
-        this.originalText = originalText;
+
+        this.originalText = originalText.toLowerCase();
     }
 
     public String[] getGroups(){
