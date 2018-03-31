@@ -22,15 +22,14 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
     //hold reference to the ItemDatabase
     //this is a mock ItemDatabase
     //ReminderDatabaseMock ItemDatabase;
-    ItemDatabase db;
     Context context;
     List<ItemEntity> items;
     int count;
 
-    public ReminderAdapter(Context context, ItemDatabase db) {
+    public ReminderAdapter(Context context) {
         this.context = context;
-        this.db = db;
-        updateItemList();
+        count = 0;
+        items = null;
     }
 
     @Override
@@ -43,7 +42,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
     @Override
     public void onBindViewHolder(ReminderViewHolder holder, int position) {
         //holder.bindView(database.getReminderAt(position));
-        //ItemEntity item = db.getTodayItems().get(position);
+        //ItemEntity item = db.queryTodayItems().get(position);
         holder.bindView(items.get(position));
     }
 
@@ -53,8 +52,8 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
         //return database.getDbSize();
     }
 
-    public void updateItemList(){
-        items = db.getTodayItems();
+    public void updateItemList(List<ItemEntity> items){
+        this.items = items;
         count = items.size();
     }
 }

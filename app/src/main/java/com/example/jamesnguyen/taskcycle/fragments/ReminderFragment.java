@@ -13,19 +13,20 @@ import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
 import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
+import com.example.jamesnguyen.taskcycle.room.ItemEntity;
+
+import java.util.List;
 
 /**
  * Created by jamesnguyen on 3/16/18.
  */
 
 public class ReminderFragment extends Fragment {
+
     public static final String TAG = "ReminderFragmentTag";
     public static final String DATABASE_REF_ARGUMENT = "db_ref_argument";
     RecyclerView mRecyclerView;
     ReminderAdapter mReminderAdapter;
-
-    //TODO ItemDatabase reference
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,31 +36,31 @@ public class ReminderFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //inflate the view
         View view = inflater.inflate(R.layout.reminder_list_fragment, container,  false);
         mRecyclerView = view.findViewById(R.id.reminder_list_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        //TODO Turn on loading icon here
+
         setReminderAdapter();
         return view;
     }
 
     public void setReminderAdapter(){
-        //start the ItemDatabase adapter
-        //set up the ItemDatabase
-        //this is a bad approach if you want your fragment to be
-        //used independently from MainActivity
-        //for this approach, this fragment only works
-        //for MainActivity,
-        //DELETE THIS COMMENT WHEN THERE'S A BETTER SOLUTION
-        //ReminderDatabaseMock db = ((MainActivity)getActivity()).getDatabase();
-        ItemDatabase db = ((MainActivity)getActivity()).getDatabase();
-
-        mReminderAdapter = new ReminderAdapter(getActivity(),db);
+        mReminderAdapter = new ReminderAdapter(getActivity());
         mRecyclerView.setAdapter(mReminderAdapter);
     }
+    public void turnOnLoadingIcon(){
+        //TODO turn on loading icon
+    }
 
-    public void updateDatabase(){
-        mReminderAdapter.updateItemList();
+    public void turnOffLoadingIcon(){
+        //TODO Turn off loading icon
+    }
+
+    public void updateDatabase(List<ItemEntity> items){
+        turnOffLoadingIcon();
+        mReminderAdapter.updateItemList(items);
         mReminderAdapter.notifyDataSetChanged();
     }
 

@@ -4,14 +4,9 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
-import android.util.Log;
-
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+
 
 @Database(
         entities = {ItemEntity.class},
@@ -22,16 +17,19 @@ public abstract class ItemDatabase extends RoomDatabase {
     private static ItemDatabase INSTANCE;
     public static final int VERSION = 1;
     public abstract ItemDao getItemDao();
-    //private final String format = "EEE, M.d.yyyy h:mm a";
+    List<ItemEntity> items;
 
     public static ItemDatabase getInstance(Context context){
         if(INSTANCE==null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                     ItemDatabase.class, "item-database")
-                    .allowMainThreadQueries()
                     .build();
         }
         return INSTANCE;
+    }
+
+    public List<ItemEntity> getItems() {
+        return items;
     }
 
     public static void destroyInstance(){
@@ -40,11 +38,17 @@ public abstract class ItemDatabase extends RoomDatabase {
         }
     }
 
-    public List<ItemEntity> getAllItems(){
-        return getItemDao().getAll();
+    public List<ItemEntity> queryAllItems(){
+        items = getItemDao().getAll();
+        return items;
     }
 
-    public List<ItemEntity> getTodayItems(){
+    public void insertNewItem(ItemEntity[] items){
+        getItemDao().insert(items);
+        return;
+    }
+
+    public List<ItemEntity> queryTodayItems(){
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY,0);
         calendar.set(Calendar.MINUTE,0);
@@ -52,7 +56,8 @@ public abstract class ItemDatabase extends RoomDatabase {
         calendar.set(Calendar.HOUR_OF_DAY,23);
         calendar.set(Calendar.MINUTE,59);
         long to = calendar.getTimeInMillis();
-        return getItemDao().getItemsBetweenDates(from, to);
+        items = getItemDao().getItemsBetweenDates(from, to);
+        return items;
     }
 
     public int getAllItemsCount(){

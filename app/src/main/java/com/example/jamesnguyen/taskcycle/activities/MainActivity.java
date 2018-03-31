@@ -2,6 +2,7 @@ package com.example.jamesnguyen.taskcycle.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -20,7 +21,7 @@ import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
 import java.util.Calendar;
-import java.util.Random;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         NewItemFragment.OnNewItemCreated{
@@ -37,17 +38,18 @@ public class MainActivity extends AppCompatActivity implements
     public static final int START_NEW_ITEM_FRAGMENT = 1;
     public static final int START_SETTING_FRAGMNENT = 2;
 
+    LoadItemsTask asyncTask;
+    int loadMode;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//
         database = ItemDatabase.getInstance(this);
-        //populate the database
-        //database.getItemDao().deleteAll();
-        //populateDb();
         fab = findViewById(R.id.fab);
+        // flag = 0 will load all items
+        loadMode = LoadItemsTask.LOAD_TODAY_ITEMS;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.main_activity_container, fragment, ReminderFragment.TAG)
                     .commit();
+
+            //Start loading data for fragment
+            runDbOperationAndUpdateReminderFragment(null);
+
         }
 
         fab.setOnClickListener(new View.OnClickListener(){
@@ -104,11 +110,9 @@ public class MainActivity extends AppCompatActivity implements
         //ReminderMock newItem = new ReminderMock(itemName, calendar, hasDate, hasTime);
         //testEncapsulation(newItem);
         ItemEntity item = new ItemEntity(itemName, calendar.getTimeInMillis(), hasDate, hasTime);
-        database.getItemDao().insert(item);
+        //database.getItemDao().insert(item);
+        runDbOperationAndUpdateReminderFragment(item);
 
-        ReminderFragment fragment = (ReminderFragment)getSupportFragmentManager()
-                .findFragmentByTag(ReminderFragment.TAG);
-        fragment.updateDatabase();
     }
 
     public static Intent createIntent(Context context, int fragmentCode){
@@ -156,18 +160,74 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    public void populateDb(){
-        ItemEntity item;
-        String title;
-        long millis;
-        Random rand =new Random();
-
-        for(int i =0;i<5;i++){
-            title = "Item #"+Integer.toString(i);
-            millis = rand.nextInt(9999999)+1000000;
-            item = new ItemEntity(title, millis, true, false);
-            database.getItemDao().insert(item);
-        }
+    public void setLoadMode(int loadMode){
+        this.loadMode = loadMode;
     }
 
+    public void runDbOperationAndUpdateReminderFragment(ItemEntity item){
+        asyncTask = new LoadItemsTask(loadMode, true);
+        if(item==null){
+            asyncTask.execute();
+        } else
+            asyncTask.execute(item);
+    }
+//    public void loadTodayItemsToReminderFragment(){
+//        asyncTask = new LoadItemsTask(loadMode, true);
+//        asyncTask.execute();
+//    }
+//    public void loadAllItemsToReminderFragment(){
+//        asyncTask = new LoadItemsTask(loadMode, true);
+//        asyncTask.execute();
+//    }
+//    public void saveItemAndUpdateReminderFragment(ItemEntity item){
+//        asyncTask = new LoadItemsTask(loadMode, true);
+//        asyncTask.execute(item);
+//    }
+
+    private class LoadItemsTask extends AsyncTask<ItemEntity, Void, Void> {
+        public final static int LOAD_ALL_ITEMS = 0;
+        public final static int LOAD_TODAY_ITEMS = 1;
+
+        boolean updateReminderFragment;
+        int flag;
+
+        public LoadItemsTask(int flag, boolean updateReminderFragment) {
+            this.updateReminderFragment = updateReminderFragment;
+            this.flag = flag;
+        }
+
+        @Override
+        protected Void doInBackground(ItemEntity... itemEntities) {
+            //load datbase to item list
+            if(itemEntities.length!=0){
+                database.insertNewItem(itemEntities);
+            }
+            switch(flag){
+                default:
+                case 0:
+                    database.queryAllItems();
+                    break;
+                case 1:
+                    database.queryTodayItems();
+                    break;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //turn on loading icon
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            //update recyclerView fragment
+            if(updateReminderFragment){
+                ReminderFragment fragment = (ReminderFragment)getSupportFragmentManager()
+                        .findFragmentByTag(ReminderFragment.TAG);
+                fragment.updateDatabase(database.getItems());
+            }
+        }
+    }
 }
