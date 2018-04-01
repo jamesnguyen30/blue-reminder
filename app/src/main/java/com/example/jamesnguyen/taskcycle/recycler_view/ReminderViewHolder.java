@@ -1,6 +1,7 @@
 package com.example.jamesnguyen.taskcycle.recycler_view;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.dialogs.ItemEditDialogFragment;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +42,7 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
         calendar = Calendar.getInstance();
         reminderTitle = (TextView)itemView.findViewById(R.id.reminder_title);
         reminderDate = (TextView)itemView.findViewById(R.id.reminder_date);
+        itemView.setOnClickListener(this);
     }
 
     public void bindView(ItemEntity item){
@@ -72,8 +75,10 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
         reminderDate.setText(today + dateFormate.format(calendar.getTime()));
 
     }
+
     @Override
     public void onClick(View v) {
-
+        ItemEditDialogFragment fragment = ItemEditDialogFragment.newInstance();
+        fragment.show(((AppCompatActivity)context).getSupportFragmentManager(), ItemEditDialogFragment.TAG);
     }
 }

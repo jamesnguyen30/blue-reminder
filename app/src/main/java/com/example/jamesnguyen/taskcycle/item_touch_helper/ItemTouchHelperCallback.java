@@ -20,7 +20,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     ReminderAdapter mAdapter;
     ColorDrawable background;
     Drawable checkIcon;
-    Drawable editIcon;
+    Drawable locationIcon;
     int checkIconWidth;
     int checkIconHeight;
     final int greenBackgroundColor = Color.parseColor("#6DA34D");
@@ -44,7 +44,7 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
         clearPaint = new Paint();
         clearPaint.setColor(whiteBackgroundColor);
         checkIcon = ContextCompat.getDrawable(context, R.drawable.ic_check_white_24dp);
-        editIcon = ContextCompat.getDrawable(context, R.drawable.ic_edit_white_24dp);
+        locationIcon = ContextCompat.getDrawable(context, R.drawable.ic_location_on_white_24dp);
         checkIconWidth = checkIcon.getIntrinsicWidth();
         checkIconHeight = checkIcon.getIntrinsicHeight();
     }
@@ -116,8 +116,8 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
                 iconLeft = iconRight - checkIconWidth;
                 iconBottom = iconTop + checkIconHeight;
 
-                editIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
-                editIcon.draw(c);
+                locationIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                locationIcon.draw(c);
 
             } else if(dX>0) { // swipe right
                 background.setColor(greenBackgroundColor);

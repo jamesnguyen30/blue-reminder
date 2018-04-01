@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.dialogs.ItemEditDialogFragment;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
 import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
@@ -22,6 +23,7 @@ import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         NewItemFragment.OnNewItemCreated, ReminderAdapter.ReminderAdapterDbOperations{
@@ -50,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements
         fab = findViewById(R.id.fab);
         // flag = 0 will load all items
         loadMode = LoadItemsTask.LOAD_ALL_ITEMS;
+
+        //populateDb();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -195,6 +199,18 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void updateItem(ItemEntity items) {
 
+    }
+
+    public void populateDb(){
+        int count = 10;
+        ItemEntity[] items = new ItemEntity[count];
+        ItemEntity item;
+        for(int i =0;i<10;i++){
+            item = new ItemEntity("Item #" + Integer.toString(i), Calendar.getInstance().getTimeInMillis(), true, true);
+            items[i] = item;
+        }
+        asyncTask = new LoadItemsTask(LoadItemsTask.SAVE_ITEM, false);
+        asyncTask.execute(items);
     }
 
     private class LoadItemsTask extends AsyncTask<ItemEntity, Void, Void> {

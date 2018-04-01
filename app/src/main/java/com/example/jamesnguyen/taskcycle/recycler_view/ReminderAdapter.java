@@ -85,8 +85,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
 
     public void onUpdate(int position){
         //TODO start an edit dialog
-        ItemEditDialogFragment fragment = ItemEditDialogFragment.newInstance();
-        fragment.show(((AppCompatActivity)context).getSupportFragmentManager(), ItemEditDialogFragment.TAG);
+
         //TODO Update item implementation
 
         //revert the item back to its position
