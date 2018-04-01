@@ -79,7 +79,12 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public void onSwiped(RecyclerView.ViewHolder viewHolder
             , int direction) {
         //Log.d("ItemTouchHelperCallback", Integer.toString(direction));
-        mAdapter.onDeleteItem( viewHolder.getAdapterPosition());
+        if(direction==ItemTouchHelper.RIGHT)
+            mAdapter.onDeleteItem( viewHolder.getAdapterPosition());
+        else if(direction==ItemTouchHelper.LEFT){
+            //Start edit fragment and update that sole item if use update the item
+            mAdapter.onUpdate( viewHolder.getAdapterPosition());
+        }
     }
 
 

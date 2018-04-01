@@ -1,7 +1,9 @@
 package com.example.jamesnguyen.taskcycle.recycler_view;
 
+import android.app.DialogFragment;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.dialogs.ItemEditDialogFragment;
 import com.example.jamesnguyen.taskcycle.item_touch_helper.ItemTouchHelperAdapter;
 import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
@@ -81,7 +84,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
     }
 
     public void onUpdate(int position){
+        //TODO start an edit dialog
+        ItemEditDialogFragment fragment = ItemEditDialogFragment.newInstance();
+        fragment.show(((AppCompatActivity)context).getSupportFragmentManager(), ItemEditDialogFragment.TAG);
         //TODO Update item implementation
+
+        //revert the item back to its position
+        notifyItemChanged(position);
     }
 //
 //    @Override
