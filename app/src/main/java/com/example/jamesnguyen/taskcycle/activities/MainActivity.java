@@ -22,7 +22,6 @@ import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
 import java.util.Calendar;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         NewItemFragment.OnNewItemCreated, ReminderAdapter.ReminderAdapterDbOperations{
@@ -63,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements
 
             //Start loading data for fragment
             //runDbOperationAndUpdateReminderFragment(null);
-            loadAllItems();
+            loadByMode(loadMode);
         }
 
         fab.setOnClickListener(new View.OnClickListener(){
@@ -114,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements
         //database.getItemDao().insert(item);
         //runDbOperationAndUpdateReminderFragment(item);
         insertItems(item);
+        loadByMode(loadMode);
 
     }
 
@@ -166,13 +166,10 @@ public class MainActivity extends AppCompatActivity implements
         this.loadMode = loadMode;
     }
 
-//    public void runDbOperationAndUpdateReminderFragment(ItemEntity item){
-//        asyncTask = new LoadItemsTask(loadMode, true);
-//        if(item==null){
-//            asyncTask.execute();
-//        } else
-//            asyncTask.execute(item);
-//    }
+    public void loadByMode(int loadMode){
+        asyncTask = new LoadItemsTask(loadMode, true);
+        asyncTask.execute();
+    }
 
     public void loadAllItems(){
         asyncTask = new LoadItemsTask(LoadItemsTask.LOAD_ALL_ITEMS, true);
@@ -185,13 +182,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public void insertItems(ItemEntity item){
-        asyncTask = new LoadItemsTask(LoadItemsTask.SAVE_ITEM, true);
+        asyncTask = new LoadItemsTask(LoadItemsTask.SAVE_ITEM, false);
         asyncTask.execute(item);
     }
 
     @Override
     public void deleteItem(ItemEntity item) {
-        asyncTask = new LoadItemsTask(LoadItemsTask.DELETE_ITEM, true);
+        asyncTask = new LoadItemsTask(LoadItemsTask.DELETE_ITEM, false);
         asyncTask.execute(item);
     }
 
@@ -199,18 +196,6 @@ public class MainActivity extends AppCompatActivity implements
     public void updateItem(ItemEntity items) {
 
     }
-//    public void loadTodayItemsToReminderFragment(){
-//        asyncTask = new LoadItemsTask(loadMode, true);
-//        asyncTask.execute();
-//    }
-//    public void loadAllItemsToReminderFragment(){
-//        asyncTask = new LoadItemsTask(loadMode, true);
-//        asyncTask.execute();
-//    }
-//    public void saveItemAndUpdateReminderFragment(ItemEntity item){
-//        asyncTask = new LoadItemsTask(loadMode, true);
-//        asyncTask.execute(item);
-//    }
 
     private class LoadItemsTask extends AsyncTask<ItemEntity, Void, Void> {
         public final static int LOAD_ALL_ITEMS = 0;
