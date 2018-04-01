@@ -5,12 +5,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.item_touch_helper.ItemTouchHelperCallback;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
 import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
@@ -43,12 +45,20 @@ public class ReminderFragment extends Fragment {
         //TODO Turn on loading icon here
 
         setReminderAdapter();
+
+        setItemTouchHelper();
         return view;
     }
 
     public void setReminderAdapter(){
         mReminderAdapter = new ReminderAdapter(getActivity());
         mRecyclerView.setAdapter(mReminderAdapter);
+    }
+
+    public void setItemTouchHelper(){
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(getContext(), mReminderAdapter);
+        ItemTouchHelper helper = new ItemTouchHelper(callback);
+        helper.attachToRecyclerView(mRecyclerView);
     }
     public void turnOnLoadingIcon(){
         //TODO turn on loading icon
@@ -61,7 +71,7 @@ public class ReminderFragment extends Fragment {
     public void updateDatabase(List<ItemEntity> items){
         turnOffLoadingIcon();
         mReminderAdapter.updateItemList(items);
-        mReminderAdapter.notifyDataSetChanged();
+        //mReminderAdapter.notifyDataSetChanged();
     }
 
     public static ReminderFragment newInstance(){

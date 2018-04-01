@@ -17,6 +17,7 @@ import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
 import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
+import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
 import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
@@ -24,7 +25,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
-        NewItemFragment.OnNewItemCreated{
+        NewItemFragment.OnNewItemCreated, ReminderAdapter.ReminderAdapterDbOperations{
 
     FloatingActionButton fab;
     //mock ItemDatabase
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements
         database = ItemDatabase.getInstance(this);
         fab = findViewById(R.id.fab);
         // flag = 0 will load all items
-        loadMode = LoadItemsTask.LOAD_TODAY_ITEMS;
+        loadMode = LoadItemsTask.LOAD_ALL_ITEMS;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -61,8 +62,8 @@ public class MainActivity extends AppCompatActivity implements
                     .commit();
 
             //Start loading data for fragment
-            runDbOperationAndUpdateReminderFragment(null);
-
+            //runDbOperationAndUpdateReminderFragment(null);
+            loadAllItems();
         }
 
         fab.setOnClickListener(new View.OnClickListener(){
@@ -111,7 +112,8 @@ public class MainActivity extends AppCompatActivity implements
         //testEncapsulation(newItem);
         ItemEntity item = new ItemEntity(itemName, calendar.getTimeInMillis(), hasDate, hasTime);
         //database.getItemDao().insert(item);
-        runDbOperationAndUpdateReminderFragment(item);
+        //runDbOperationAndUpdateReminderFragment(item);
+        insertItems(item);
 
     }
 
@@ -164,12 +166,38 @@ public class MainActivity extends AppCompatActivity implements
         this.loadMode = loadMode;
     }
 
-    public void runDbOperationAndUpdateReminderFragment(ItemEntity item){
-        asyncTask = new LoadItemsTask(loadMode, true);
-        if(item==null){
-            asyncTask.execute();
-        } else
-            asyncTask.execute(item);
+//    public void runDbOperationAndUpdateReminderFragment(ItemEntity item){
+//        asyncTask = new LoadItemsTask(loadMode, true);
+//        if(item==null){
+//            asyncTask.execute();
+//        } else
+//            asyncTask.execute(item);
+//    }
+
+    public void loadAllItems(){
+        asyncTask = new LoadItemsTask(LoadItemsTask.LOAD_ALL_ITEMS, true);
+        asyncTask.execute();
+    }
+
+    public void loadTodayItems(){
+        asyncTask = new LoadItemsTask(LoadItemsTask.LOAD_TODAY_ITEMS, true);
+        asyncTask.execute();
+    }
+
+    public void insertItems(ItemEntity item){
+        asyncTask = new LoadItemsTask(LoadItemsTask.SAVE_ITEM, true);
+        asyncTask.execute(item);
+    }
+
+    @Override
+    public void deleteItem(ItemEntity item) {
+        asyncTask = new LoadItemsTask(LoadItemsTask.DELETE_ITEM, true);
+        asyncTask.execute(item);
+    }
+
+    @Override
+    public void updateItem(ItemEntity items) {
+
     }
 //    public void loadTodayItemsToReminderFragment(){
 //        asyncTask = new LoadItemsTask(loadMode, true);
@@ -187,6 +215,8 @@ public class MainActivity extends AppCompatActivity implements
     private class LoadItemsTask extends AsyncTask<ItemEntity, Void, Void> {
         public final static int LOAD_ALL_ITEMS = 0;
         public final static int LOAD_TODAY_ITEMS = 1;
+        public final static int SAVE_ITEM = 2;
+        public final static int DELETE_ITEM = 3;
 
         boolean updateReminderFragment;
         int flag;
@@ -199,9 +229,6 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         protected Void doInBackground(ItemEntity... itemEntities) {
             //load datbase to item list
-            if(itemEntities.length!=0){
-                database.insertNewItem(itemEntities);
-            }
             switch(flag){
                 default:
                 case 0:
@@ -209,6 +236,12 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case 1:
                     database.queryTodayItems();
+                    break;
+                case 2 :
+                    database.insertNewItem(itemEntities);
+                    break;
+                case 3:
+                    database.deleteItem(itemEntities);
                     break;
             }
             return null;

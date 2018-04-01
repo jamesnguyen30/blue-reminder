@@ -17,6 +17,8 @@ public abstract class ItemDatabase extends RoomDatabase {
     private static ItemDatabase INSTANCE;
     public static final int VERSION = 1;
     public abstract ItemDao getItemDao();
+
+    //TODO fix this design, this class should not hold List<ItemEntity> instance
     List<ItemEntity> items;
 
     public static ItemDatabase getInstance(Context context){
@@ -46,6 +48,12 @@ public abstract class ItemDatabase extends RoomDatabase {
     public void insertNewItem(ItemEntity[] items){
         getItemDao().insert(items);
         return;
+    }
+
+    public void deleteItem(ItemEntity[] items){
+        getItemDao().delete(items);
+        return;
+
     }
 
     public List<ItemEntity> queryTodayItems(){

@@ -3,11 +3,14 @@ package com.example.jamesnguyen.taskcycle.recycler_view;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.item_touch_helper.ItemTouchHelperAdapter;
 import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
@@ -17,7 +20,12 @@ import java.util.List;
  * Created by jamesnguyen on 3/16/18.
  */
 
-public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
+public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
+
+    public interface ReminderAdapterDbOperations {
+        void deleteItem(ItemEntity items);
+        void updateItem(ItemEntity items);
+    }
 
     //hold reference to the ItemDatabase
     //this is a mock ItemDatabase
@@ -25,9 +33,15 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
     Context context;
     List<ItemEntity> items;
     int count;
+    ReminderAdapterDbOperations mCallback;
 
     public ReminderAdapter(Context context) {
         this.context = context;
+        try{
+            mCallback = ((ReminderAdapterDbOperations)context);
+        } catch (ClassCastException e){
+            e.printStackTrace();
+        }
         count = 0;
         items = null;
     }
@@ -55,5 +69,28 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder>{
     public void updateItemList(List<ItemEntity> items){
         this.items = items;
         count = items.size();
+        notifyDataSetChanged();
     }
+
+    public void onDeleteItem(int position){
+        ItemEntity item = items.remove(position);
+        count = items.size();
+        mCallback.deleteItem(item);
+        notifyDataSetChanged();
+
+    }
+
+    public void onUpdate(int position){
+        //TODO Update item implementation
+    }
+//
+//    @Override
+//    public void onItemMove(int from, int to) {
+//        //TODO Implement when item move up or down
+//    }
+//
+//    @Override
+//    public void onItemRemoved(int position) {
+//        //TODO Implment when item removed
+//    }
 }
