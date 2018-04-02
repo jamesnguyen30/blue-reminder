@@ -1,5 +1,7 @@
 package com.example.jamesnguyen.taskcycle.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,7 +28,8 @@ import java.util.List;
 public class ReminderFragment extends Fragment {
 
     public static final String TAG = "ReminderFragmentTag";
-    public static final String DATABASE_REF_ARGUMENT = "db_ref_argument";
+    public static final String ITEM_EXTRA= "item_extra";
+    public static final String POSITION_EXTRA = "position_extra";
     RecyclerView mRecyclerView;
     ReminderAdapter mReminderAdapter;
 
@@ -65,6 +68,13 @@ public class ReminderFragment extends Fragment {
         //TODO Turn off loading icon
     }
 
+    public static Intent createItent(ItemEntity item, int position){
+        Intent intent =new Intent();
+        intent.putExtra(ITEM_EXTRA, item);
+        intent.putExtra(POSITION_EXTRA, position);
+        return intent;
+    }
+
     public void updateDatabase(List<ItemEntity> items){
         turnOffLoadingIcon();
         mReminderAdapter.updateItemList(items);
@@ -75,4 +85,12 @@ public class ReminderFragment extends Fragment {
         return new ReminderFragment();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK){
+            ItemEntity item = data.getParcelableExtra(ITEM_EXTRA);
+            int positon = data.getIntExtra(POSITION_EXTRA, -1);
+            mReminderAdapter.onUpdateItemAt(item, positon);
+        }
+    }
 }

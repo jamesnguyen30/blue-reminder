@@ -53,7 +53,11 @@ public abstract class ItemDatabase extends RoomDatabase {
     public void deleteItem(ItemEntity[] items){
         getItemDao().delete(items);
         return;
+    }
 
+    public void updateItem(ItemEntity[] items){
+        getItemDao().update(items);
+        return;
     }
 
     public List<ItemEntity> queryTodayItems(){

@@ -81,7 +81,7 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
 
     @Override
     public void onClick(View v) {
-        Bundle args = ItemEditFragment.creatBundle(item);
+        Bundle args = ItemEditFragment.creatBundle(item, getAdapterPosition());
         //ItemEditFragment fragment = ItemEditFragment.newInstance(args);
         ((MainActivity)context).startFragmentWithBackStack(MainActivity.START_EDIT_FRAGMENT,
                 MainActivity.REPLACE_FLAG,

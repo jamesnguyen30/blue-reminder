@@ -69,15 +69,20 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void onDeleteItem(int position){
+    public void onDeleteItemAt(int position){
         ItemEntity item = items.remove(position);
         count = items.size();
         mCallback.deleteItem(item);
         notifyDataSetChanged();
-
     }
 
-    public void onUpdate(int position){
+    public void onUpdateItemAt(ItemEntity item, int position){
+        items.set(position, item);
+        mCallback.updateItem(item);
+        notifyItemChanged(position);
+    }
+
+    public void onOpenLocationDialog(int position){
         //TODO start an edit dialog
         //TODO Update item implementation
         OpenLocationDialog dialog = OpenLocationDialog.newInstance();

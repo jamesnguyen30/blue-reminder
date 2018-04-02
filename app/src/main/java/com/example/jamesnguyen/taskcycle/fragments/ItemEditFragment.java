@@ -1,5 +1,7 @@
 package com.example.jamesnguyen.taskcycle.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -17,12 +19,15 @@ public class ItemEditFragment extends Fragment {
 
     public static final String TAG ="ItemEditDiaglogFragment";
     public static final String ITEM_ARGS = "item_data_args";
+    public static final String POSITION_ARGS = "position_args";
 
     TextView mTitle;
     TextView mDate;
     TextView mLocation;
     ItemEntity item;
+    int position;
     FloatingActionButton fab;
+    boolean isChanged;
 
 //    @NonNull
 //    @Override
@@ -53,8 +58,11 @@ public class ItemEditFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isChanged = false;
         //load arguement
-        item = getArguments().getParcelable(ITEM_ARGS);
+        Bundle args = getArguments();
+        item = args.getParcelable(ITEM_ARGS);
+        position = args.getInt(POSITION_ARGS);
     }
 
     @Nullable
@@ -72,18 +80,34 @@ public class ItemEditFragment extends Fragment {
         fab = (FloatingActionButton)container.getRootView().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
         return view;
+
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         fab.setVisibility(View.VISIBLE);
+        testChange();
+        //if item is edited
+        if(isChanged){
+            Intent intent = ReminderFragment.createItent(item, position);
+            //send data to Reminder Fragmetn
+            Fragment fragment = getTargetFragment();
+            fragment.onActivityResult(0, Activity.RESULT_OK, intent);
+        }
+
     }
 
-    public static Bundle creatBundle(ItemEntity item){
+    private void testChange(){
+        isChanged = true;
+        item.setTitle("Changed the title");
+    }
+
+    public static Bundle creatBundle(ItemEntity item, int position){
         Bundle args = new Bundle();
         //args.putSerializable(item);
         args.putParcelable(ITEM_ARGS, item);
+        args.putInt(POSITION_ARGS, position);
         return args;
     }
     public static ItemEditFragment newInstance(){

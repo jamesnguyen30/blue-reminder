@@ -111,11 +111,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNewItemCreated(String itemName, Calendar calendar, boolean hasDate, boolean hasTime) {
-        //ReminderMock newItem = new ReminderMock(itemName, calendar, hasDate, hasTime);
-        //testEncapsulation(newItem);
         ItemEntity item = new ItemEntity(itemName, calendar.getTimeInMillis(), hasDate, hasTime);
-        //database.getItemDao().insert(item);
-        //runDbOperationAndUpdateReminderFragment(item);
         insertItems(item);
         loadByMode(loadMode);
 
@@ -148,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements
             case 3:
                 fragment = ItemEditFragment.newInstance();
                 tag = ItemEditFragment.TAG;
+                fragment.setTargetFragment(fm.findFragmentByTag(ReminderFragment.TAG), 0);
                 break;
         }
 
@@ -201,8 +198,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void updateItem(ItemEntity items) {
-
+    public void updateItem(ItemEntity item) {
+        asyncTask = new LoadItemsTask(LoadItemsTask.UPDATE_ITEM, false);
+        asyncTask.execute(item);
     }
 
     public void populateDb(){
@@ -222,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements
         public final static int LOAD_TODAY_ITEMS = 1;
         public final static int SAVE_ITEM = 2;
         public final static int DELETE_ITEM = 3;
+        public final static int UPDATE_ITEM = 4;
 
         boolean updateReminderFragment;
         int flag;
@@ -247,6 +246,9 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case 3:
                     database.deleteItem(itemEntities);
+                    break;
+                case 4:
+                    database.updateItem(itemEntities);
                     break;
             }
             return null;

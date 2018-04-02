@@ -7,13 +7,11 @@ import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import com.example.jamesnguyen.taskcycle.R;
-import com.example.jamesnguyen.taskcycle.dialogs_fragments.OpenLocationDialog;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
 
 public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
@@ -82,10 +80,10 @@ public class ItemTouchHelperCallback extends ItemTouchHelper.Callback {
             , int direction) {
         //Log.d("ItemTouchHelperCallback", Integer.toString(direction));
         if(direction==ItemTouchHelper.RIGHT)
-            mAdapter.onDeleteItem( viewHolder.getAdapterPosition());
+            mAdapter.onDeleteItemAt( viewHolder.getAdapterPosition());
         else if(direction==ItemTouchHelper.LEFT){
             //Start edit fragment and update that sole item if use update the item
-            mAdapter.onUpdate( viewHolder.getAdapterPosition());
+            mAdapter.onOpenLocationDialog( viewHolder.getAdapterPosition());
         }
     }
 
