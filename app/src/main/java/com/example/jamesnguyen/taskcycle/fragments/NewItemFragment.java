@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jamesnguyen.taskcycle.R;
@@ -48,9 +49,11 @@ public class NewItemFragment extends Fragment {
     FloatingActionButton workCycleButton;
     EditText mEditText;
     OnNewItemCreated mCallback;
-    SmartDateDetector dateDetector = new SmartDateDetector();
+    SmartDateDetector dateDetector;
+    ImageView mBackground;
 
     int previousLength;
+    InputMethodManager ipm;
 
     @Override
     public void onAttach(Context context) {
@@ -68,6 +71,7 @@ public class NewItemFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dateDetector = new SmartDateDetector();
+        dateDetector = new SmartDateDetector();
         spanBuilder = new SpannableStringBuilder();
 
 
@@ -76,14 +80,15 @@ public class NewItemFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_new_reminder, container, false);
+        View view = inflater.inflate(R.layout.new_reminder_fragment, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         fab = (FloatingActionButton)container.getRootView().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
         mEditText =(EditText)view.findViewById(R.id.new_reminder_input);
+        mBackground = view.findViewById(R.id.new_reminder_framgnet_background);
 
         //show keyboard
-        InputMethodManager ipm =  (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        ipm =  (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         ipm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
         mEditText.requestFocus();
@@ -133,6 +138,13 @@ public class NewItemFragment extends Fragment {
             }
         });
 
+        mBackground.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
+
         return view;
     }
 
@@ -144,6 +156,8 @@ public class NewItemFragment extends Fragment {
     public void onPause() {
         super.onPause();
         fab.setVisibility(View.VISIBLE);
+        ipm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
     }
 
     private void buildSpannable(Editable e, int start, int end){
