@@ -35,6 +35,7 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
     private final String HAS_DATE = "EEE, M.d.yyyy";
     private final String HAS_TIME = "h:mm a";
     private final String NO_DATE ="";
+
 //    private String chosenDatePattern;
     SimpleDateFormat dateFormate = new SimpleDateFormat(HAS_DATE);
 

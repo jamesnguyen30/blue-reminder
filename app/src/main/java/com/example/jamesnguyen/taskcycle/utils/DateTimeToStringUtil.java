@@ -8,7 +8,7 @@ import java.util.Calendar;
 public class DateTimeToStringUtil {
     private static final String HAS_DATE_WITH_TIME = "EEE, M.d.yyyy h:mm a";
     private static final String HAS_DATE = "EEE, M.d.yyyy";
-    private static final String HAS_TIME = "h:mm a";
+    private static final String HAS_TIME = "hh:mm";
     private static final String NO_DATE ="";
 
     public static String itemEntityToString(ItemEntity item){
@@ -16,6 +16,8 @@ public class DateTimeToStringUtil {
         SimpleDateFormat dateFormate = new SimpleDateFormat(HAS_DATE);
         String result;
         Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(item.getDate());
+
         if(item.isHasDate()){
             pattern = HAS_DATE;
             if(item.isHasTime()){
@@ -31,14 +33,30 @@ public class DateTimeToStringUtil {
         }
 
         dateFormate.applyPattern(pattern);
-        String today = "Today at ";
-        if(pattern==HAS_DATE_WITH_TIME || pattern==HAS_DATE){
-            today = "";
-        } else if(pattern == NO_DATE){
-            today = "Today";
-        }
-        calendar.setTimeInMillis(item.getDate());
-        result = today + dateFormate.format(calendar.getTime());
+//        String today = "Today at ";
+//        if(pattern==HAS_DATE_WITH_TIME || pattern==HAS_DATE){
+//            today = "";
+//        } else if(pattern == NO_DATE){
+//            today = "Today";
+//        }
+
+        result = dateFormate.format(calendar.getTime());
         return result;
     }
+
+    public static String getTimeToString(ItemEntity itemEntity){
+        SimpleDateFormat dateFormate = new SimpleDateFormat(HAS_TIME);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(itemEntity.getDate());
+        return dateFormate.format(calendar.getTime());
+    }
+
+    public static String getDateToString(ItemEntity itemEntity){
+        SimpleDateFormat dateFormate = new SimpleDateFormat("EEE, MMM d, yyyy");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(itemEntity.getDate());
+        return dateFormate.format(calendar.getTime());
+    }
+
+
 }
