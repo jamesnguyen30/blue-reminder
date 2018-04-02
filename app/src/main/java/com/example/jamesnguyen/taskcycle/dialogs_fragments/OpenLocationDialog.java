@@ -1,31 +1,23 @@
-package com.example.jamesnguyen.taskcycle.dialogs;
+package com.example.jamesnguyen.taskcycle.dialogs_fragments;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.jamesnguyen.taskcycle.R;
 
-public class ItemEditDialogFragment extends DialogFragment {
-
-    public static final String TAG ="ItemEditDiaglogFragment";
-    @NonNull
+public class OpenLocationDialog extends DialogFragment {
+    public static final String TAG = "OpenLocationDialog";
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-//        return super.onCreateDialog(savedInstanceState);
-//
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder =new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        builder.setView(inflater.inflate(R.layout.edit_item_dialog, null))
-                .setTitle("Reminder")
+        builder.setView(inflater.inflate(R.layout.open_location_dialog, null))
+                .setTitle("Open direction?")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -41,7 +33,7 @@ public class ItemEditDialogFragment extends DialogFragment {
         return builder.create();
     }
 
-    public static ItemEditDialogFragment newInstance(){
-        return new ItemEditDialogFragment();
+    public static OpenLocationDialog newInstance(){
+        return new OpenLocationDialog();
     }
 }

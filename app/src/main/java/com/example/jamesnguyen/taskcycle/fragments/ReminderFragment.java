@@ -33,6 +33,7 @@ public class ReminderFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mReminderAdapter = new ReminderAdapter(getActivity());
     }
 
     @Nullable
@@ -41,17 +42,13 @@ public class ReminderFragment extends Fragment {
         View view = inflater.inflate(R.layout.reminder_list_fragment, container,  false);
         mRecyclerView = view.findViewById(R.id.reminder_list_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
         //TODO Turn on loading icon here
-
         setReminderAdapter();
-
         setItemTouchHelper();
         return view;
     }
 
     public void setReminderAdapter(){
-        mReminderAdapter = new ReminderAdapter(getActivity());
         mRecyclerView.setAdapter(mReminderAdapter);
     }
 

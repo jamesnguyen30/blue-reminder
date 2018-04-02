@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.jamesnguyen.taskcycle.R;
-import com.example.jamesnguyen.taskcycle.dialogs.ItemEditDialogFragment;
+import com.example.jamesnguyen.taskcycle.fragments.ItemEditFragment;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
 import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
@@ -23,7 +23,6 @@ import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
 import java.util.Calendar;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements
         NewItemFragment.OnNewItemCreated, ReminderAdapter.ReminderAdapterDbOperations{
@@ -32,13 +31,14 @@ public class MainActivity extends AppCompatActivity implements
     //mock ItemDatabase
 //    ReminderDatabaseMock database;
     ItemDatabase database;
-    private static final int ADD_FLAG = 0;
-    private static final int REPLACE_FLAG = 1;
+    public static final int ADD_FLAG = 0;
+    public static final int REPLACE_FLAG = 1;
 
     private static final String FRAGMENT_CODE_EXTRA = "fragment_code_extra";
     public static final int START_DEFAULT_FRAGMENT = 0;
     public static final int START_NEW_ITEM_FRAGMENT = 1;
     public static final int START_SETTING_FRAGMNENT = 2;
+    public static final int START_EDIT_FRAGMENT = 3;
 
     LoadItemsTask asyncTask;
     int loadMode;
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
         return intent;
     }
 
-    private void startFragmentWithBackStack(int fragmentCode, int stackCode, Bundle argument){
+    public void startFragmentWithBackStack(int fragmentCode, int stackCode, Bundle argument){
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment;
         String tag;
@@ -144,6 +144,10 @@ public class MainActivity extends AppCompatActivity implements
             case 2:
                 fragment = SettingFragment.newInstance();
                 tag = SettingFragment.TAG;
+                break;
+            case 3:
+                fragment = ItemEditFragment.newInstance();
+                tag = ItemEditFragment.TAG;
                 break;
         }
 
