@@ -85,10 +85,7 @@ public class SmartDateDetector {
             this.matchedPositions.add(matchedPosition);
             isFound = true;
         }
-        if(isFound)
-            return true;
-        else
-            return false;
+        return isFound;
     }
 
     public String[] getMatchedGroups(){

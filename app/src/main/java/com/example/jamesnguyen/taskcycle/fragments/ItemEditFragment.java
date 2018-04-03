@@ -9,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,10 @@ import com.example.jamesnguyen.taskcycle.dialogs_fragments.DatePickerDialogFragm
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.TimePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 import com.example.jamesnguyen.taskcycle.utils.DateTimeToStringUtil;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.util.Calendar;
 
@@ -30,6 +35,7 @@ public class ItemEditFragment extends Fragment {
     public static final String POSITION_ARGS = "position_args";
     public static final String CALENDAR_EXTRA = "calendar_extra";
     public static int REQUEST_CODE= 1;
+    public static int PLACE_PICKER_REQUEST_CODE = 2;
 
     EditText mTitle;
     TextView mDate;
@@ -114,8 +120,18 @@ public class ItemEditFragment extends Fragment {
         mLocation.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //TODO Open location picker ( could be dialog or fragment
+                //TODO Open PlacePickeer
+                PlacePicker .IntentBuilder builder = new PlacePicker.IntentBuilder();
 
+                //TODO start at a current location
+
+                try {
+                    startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST_CODE);
+                } catch(GooglePlayServicesRepairableException e){
+                    e.printStackTrace();
+                } catch(GooglePlayServicesNotAvailableException e){
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -133,16 +149,11 @@ public class ItemEditFragment extends Fragment {
         //if item is edited
         if(isChanged){
             Intent intent = ReminderFragment.createItent(item, position);
-            //send data to Reminder Fragmetn
+
             Fragment fragment = getTargetFragment();
             fragment.onActivityResult(0, Activity.RESULT_OK, intent);
         }
 
-    }
-
-    private void testChange(){
-        isChanged = true;
-        item.setTitle("Changed the title");
     }
 
     public static Bundle creatBundle(ItemEntity item, int position){
@@ -165,6 +176,14 @@ public class ItemEditFragment extends Fragment {
             mDate.setText(DateTimeToStringUtil.getDateToString(item));
             mTime.setText(DateTimeToStringUtil.getTimeToString(item));
             isChanged = true;
+        } else if(requestCode==PLACE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            //TODO Handle place data here
+            Place place = PlacePicker.getPlace(getContext(), data);
+            //TODO update the database with place name and it's coords
+            Log.d("ItemEditFragment", place.getName().toString());
+
         }
     }
+
+
 }

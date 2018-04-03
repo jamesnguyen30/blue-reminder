@@ -1,5 +1,6 @@
 package com.example.jamesnguyen.taskcycle.activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -7,8 +8,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +24,9 @@ import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
 import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.GoogleApiActivity;
 
 import java.util.Calendar;
 
@@ -102,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
+        checkGooglePlayServices();
     }
 
     @Override
@@ -269,5 +276,12 @@ public class MainActivity extends AppCompatActivity implements
                 fragment.updateDatabase(database.getItems());
             }
         }
+    }
+
+
+    private boolean checkGooglePlayServices() {
+        final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        //Log.i("MainActivity", GoogleApiAvailability.getInstance().getErrorString(status));
+        return status == ConnectionResult.SUCCESS;
     }
 }

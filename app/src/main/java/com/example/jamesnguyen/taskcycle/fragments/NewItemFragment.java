@@ -82,9 +82,9 @@ public class NewItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.new_reminder_fragment, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        fab = (FloatingActionButton)container.getRootView().findViewById(R.id.fab);
+        fab = container.getRootView().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
-        mEditText =(EditText)view.findViewById(R.id.new_reminder_input);
+        mEditText = view.findViewById(R.id.new_reminder_input);
         mBackground = view.findViewById(R.id.new_reminder_framgnet_background);
 
         //show keyboard

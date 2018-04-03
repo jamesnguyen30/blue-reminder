@@ -43,8 +43,8 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
         super(itemView);
         this.context = context;
         calendar = Calendar.getInstance();
-        reminderTitle = (TextView)itemView.findViewById(R.id.reminder_title);
-        reminderDate = (TextView)itemView.findViewById(R.id.reminder_date);
+        reminderTitle = itemView.findViewById(R.id.reminder_title);
+        reminderDate = itemView.findViewById(R.id.reminder_date);
         itemView.setOnClickListener(this);
     }
 
