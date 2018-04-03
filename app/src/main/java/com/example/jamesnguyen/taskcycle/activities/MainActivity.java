@@ -117,8 +117,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onNewItemCreated(String itemName, Calendar calendar, boolean hasDate, boolean hasTime) {
-        ItemEntity item = new ItemEntity(itemName, calendar.getTimeInMillis(), hasDate, hasTime);
+    public void onNewItemCreated(String itemName, Calendar calendar, boolean hasDate, boolean hasTime, String placeName, String readableAddress) {
+        ItemEntity item = new ItemEntity(itemName, calendar.getTimeInMillis(), hasDate, hasTime, placeName, readableAddress);
         insertItems(item);
         loadByMode(loadMode);
 
@@ -215,7 +215,10 @@ public class MainActivity extends AppCompatActivity implements
         ItemEntity[] items = new ItemEntity[count];
         ItemEntity item;
         for(int i =0;i<10;i++){
-            item = new ItemEntity("Item #" + Integer.toString(i), Calendar.getInstance().getTimeInMillis(), true, true);
+            item = new ItemEntity("Item #" + Integer.toString(i)
+                    , Calendar.getInstance().getTimeInMillis()
+                    , true, true,
+                    "","");
             items[i] = item;
         }
         asyncTask = new LoadItemsTask(LoadItemsTask.SAVE_ITEM, false);

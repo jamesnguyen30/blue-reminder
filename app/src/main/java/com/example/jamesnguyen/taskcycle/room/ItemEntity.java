@@ -24,6 +24,12 @@ public class ItemEntity implements Parcelable {
     @ColumnInfo(name="has_time")
     private boolean hasTime;
 
+    @ColumnInfo(name="place_name")
+    private String placeName;
+
+    @ColumnInfo(name="readable_access")
+    private String readableAddress;
+
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator<ItemEntity>(){
         @Override
         public ItemEntity createFromParcel(Parcel source) {
@@ -45,6 +51,8 @@ public class ItemEntity implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(title);
+        dest.writeString(placeName);
+        dest.writeString(readableAddress);
         dest.writeLong(date);
         dest.writeByte((byte)(hasDate?1:0));
         dest.writeByte((byte)(hasTime?1:0));
@@ -56,12 +64,16 @@ public class ItemEntity implements Parcelable {
         this.date = in.readLong();
         this.hasDate = in.readByte()!=0;
         this.hasTime = in.readByte()!=0;
+        this.placeName = in.readString();
+        this.readableAddress = in.readString();
     }
-    public ItemEntity(String title, long date, boolean hasDate, boolean hasTime) {
+    public ItemEntity(String title, long date, boolean hasDate, boolean hasTime, String placeName, String readableAddress) {
         this.title = title;
         this.date = date;
         this.hasDate = hasDate;
         this.hasTime = hasTime;
+        this.placeName = placeName;
+        this.readableAddress = readableAddress;
     }
 
     public int getId() {
@@ -104,5 +116,20 @@ public class ItemEntity implements Parcelable {
         this.date = date;
     }
 
+    public String getPlaceName() {
+        return placeName;
+    }
+
+    public void setPlaceName(String placeName) {
+        this.placeName = placeName;
+    }
+
+    public String getReadableAddress() {
+        return readableAddress;
+    }
+
+    public void setReadableAddress(String readableAddress) {
+        this.readableAddress = readableAddress;
+    }
 
 }

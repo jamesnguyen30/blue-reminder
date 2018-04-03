@@ -1,6 +1,8 @@
 package com.example.jamesnguyen.taskcycle.fragments;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +15,7 @@ import android.text.TextWatcher;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +23,23 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.dialogs_fragments.DatePickerDialogFragment;
+import com.example.jamesnguyen.taskcycle.dialogs_fragments.TimePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.smart_date_detector.MatchedPosition;
 import com.example.jamesnguyen.taskcycle.smart_date_detector.SmartDateDetector;
+import com.example.jamesnguyen.taskcycle.utils.DateTimeToStringUtil;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -38,15 +50,14 @@ import java.util.List;
 public class NewItemFragment extends Fragment {
 
     public static final String TAG = "NewItemFragmentTag";
+    private static final int PLACE_PICKER_REQUEST_CODE = 4;
+
     public interface OnNewItemCreated{
         //TODO pass an Item object here,
-        // pass a mock object for now
-        //void onNewItemCreated(String itemName);
-        void onNewItemCreated(String title, Calendar calendar, boolean hasDate, boolean hasTime);
+        void onNewItemCreated(String title, Calendar calendar, boolean hasDate, boolean hasTime, String placeName, String readableAddress);
     }
     SpannableStringBuilder spanBuilder;
     FloatingActionButton fab;
-    FloatingActionButton workCycleButton;
     EditText mEditText;
     OnNewItemCreated mCallback;
     SmartDateDetector dateDetector;
@@ -54,6 +65,17 @@ public class NewItemFragment extends Fragment {
 
     int previousLength;
     InputMethodManager ipm;
+
+    Button mDatePicker;
+    Button mTimePicker;
+    Button mPlacePicker;
+
+    String mTitle;
+    Calendar mCalendar;
+    boolean mHasDate;
+    boolean mHasTime;
+    String mPlaceName;
+    String mReadableAddress;
 
     @Override
     public void onAttach(Context context) {
@@ -73,8 +95,9 @@ public class NewItemFragment extends Fragment {
         dateDetector = new SmartDateDetector();
         dateDetector = new SmartDateDetector();
         spanBuilder = new SpannableStringBuilder();
-
-
+        mCalendar = null;
+        mPlaceName = "";
+        mReadableAddress ="";
     }
 
     @Nullable
@@ -87,9 +110,12 @@ public class NewItemFragment extends Fragment {
         mEditText = view.findViewById(R.id.new_reminder_input);
         mBackground = view.findViewById(R.id.new_reminder_framgnet_background);
 
+        mDatePicker = view.findViewById(R.id.date_picker_button);
+        mTimePicker = view.findViewById(R.id.time_picker_button);
+        mPlacePicker = view.findViewById(R.id.place_picker_button);
+
         //show keyboard
         ipm =  (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        ipm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
         mEditText.requestFocus();
 
@@ -112,7 +138,6 @@ public class NewItemFragment extends Fragment {
                 if(dateDetector.findMatches()){
                     buildSpannables(s, dateDetector.getMatchedPositions());
                 }
-
             }
         });
 
@@ -123,13 +148,22 @@ public class NewItemFragment extends Fragment {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 switch(actionId){
                     case EditorInfo.IME_ACTION_DONE:
+                        if(mCalendar==null){
+                            mCalendar = dateDetector.convertToCalendar();
+                        }
+                        //Test
+                        mHasDate = true;
+                        mHasTime = true;
                         mCallback.onNewItemCreated(
                                 removeDateFromString(v.getText().toString()
                                         , dateDetector.getMatchedPositions()),
-                                dateDetector.convertToCalendar(),
-                                dateDetector.isHasDate(),
-                                dateDetector.isHasTime()
+                                mCalendar,
+                                mHasDate || dateDetector.isHasDate(),
+                                mHasTime || dateDetector.isHasTime(),
+                                mPlaceName,
+                                mReadableAddress
                         );
+
                         getActivity().getSupportFragmentManager().popBackStack();
                         return false;
                     default:
@@ -145,6 +179,46 @@ public class NewItemFragment extends Fragment {
             }
         });
 
+        mDatePicker.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                ipm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                DatePickerDialogFragment dialogFragment = DatePickerDialogFragment.newInstance(null);
+                dialogFragment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
+                        DatePickerDialogFragment.REQUEST_CODE);
+                dialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.TAG);
+//                mHasDate = true;
+            }
+        });
+
+        mTimePicker.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                ipm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                TimePickerDialogFragment dialogFragment = TimePickerDialogFragment.newInstance(null);
+                dialogFragment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
+                        TimePickerDialogFragment.REQUEST_CODE);
+                dialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.TAG);
+//                mHasTime = true;
+            }
+        });
+
+
+        mPlacePicker.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                //TODO start at a current location
+                try {
+                    startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST_CODE);
+                } catch(GooglePlayServicesRepairableException e){
+                    e.printStackTrace();
+                } catch(GooglePlayServicesNotAvailableException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+
         return view;
     }
 
@@ -153,11 +227,21 @@ public class NewItemFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ipm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
-        fab.setVisibility(View.VISIBLE);
         ipm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        fab.setVisibility(View.VISIBLE);
     }
 
     private void buildSpannable(Editable e, int start, int end){
@@ -171,7 +255,6 @@ public class NewItemFragment extends Fragment {
         for(MatchedPosition pos : matchedPositions){
             buildSpannable(e, pos.getStartPos(), pos.getEndPos());
         }
-
     }
 
     private String removeDateFromString(String original, List<MatchedPosition> matchedPositions){
@@ -182,5 +265,28 @@ public class NewItemFragment extends Fragment {
             offset = pos.getEndPos() - pos.getStartPos();
         }
         return builder.toString();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode==PLACE_PICKER_REQUEST_CODE){
+                //TODO Handle place data here
+                Place place = PlacePicker.getPlace(getContext(), data);
+                mPlaceName = place.getName().toString();
+                mReadableAddress = place.getAddress().toString();
+                //TODO update the database with place name and it's coords
+                Log.d("ItemEditFragment", place.getName().toString() + " at " + place.getAddress());
+
+            } else if (requestCode==DatePickerDialogFragment.REQUEST_CODE
+                    || requestCode== TimePickerDialogFragment.REQUEST_CODE ){
+                mCalendar = (Calendar)data.getSerializableExtra(DatePickerDialogFragment.CALENDAR_EXTRA);
+
+                if(requestCode==DatePickerDialogFragment.REQUEST_CODE){
+                    mHasDate = true;
+                } else if(requestCode==TimePickerDialogFragment.REQUEST_CODE){
+                    mHasTime = true;
+                }
+            }
+        }
     }
 }

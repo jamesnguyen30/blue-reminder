@@ -15,7 +15,7 @@ import java.util.List;
 )
 public abstract class ItemDatabase extends RoomDatabase {
     private static ItemDatabase INSTANCE;
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
     public abstract ItemDao getItemDao();
 
     //TODO fix this design, this class should not hold List<ItemEntity> instance
@@ -25,6 +25,8 @@ public abstract class ItemDatabase extends RoomDatabase {
         if(INSTANCE==null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                     ItemDatabase.class, "item-database")
+                    //recreate the database
+                    .fallbackToDestructiveMigration()
                     .build();
         }
         return INSTANCE;

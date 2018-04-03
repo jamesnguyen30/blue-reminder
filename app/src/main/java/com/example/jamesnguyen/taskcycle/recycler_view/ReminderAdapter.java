@@ -85,19 +85,10 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
     public void onOpenLocationDialog(int position){
         //TODO start an edit dialog
         //TODO Update item implementation
-        OpenLocationDialog dialog = OpenLocationDialog.newInstance();
+        OpenLocationDialog dialog = OpenLocationDialog.newInstance(items.get(position).getPlaceName(),
+                items.get(position).getReadableAddress());
         dialog.show(((AppCompatActivity)context).getSupportFragmentManager(), OpenLocationDialog.TAG);
-        //revert the item back to its position
         notifyItemChanged(position);
     }
-//
-//    @Override
-//    public void onItemMove(int from, int to) {
-//        //TODO Implement when item move up or down
-//    }
-//
-//    @Override
-//    public void onItemRemoved(int position) {
-//        //TODO Implment when item removed
-//    }
+
 }

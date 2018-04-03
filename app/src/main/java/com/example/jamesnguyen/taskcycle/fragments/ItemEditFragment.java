@@ -33,8 +33,7 @@ public class ItemEditFragment extends Fragment {
     public static final String TAG ="ItemEditDiaglogFragment";
     public static final String ITEM_ARGS = "item_data_args";
     public static final String POSITION_ARGS = "position_args";
-    public static final String CALENDAR_EXTRA = "calendar_extra";
-    public static int REQUEST_CODE= 1;
+    //public static int REQUEST_CODE= 1;
     public static int PLACE_PICKER_REQUEST_CODE = 2;
 
     EditText mTitle;
@@ -68,7 +67,9 @@ public class ItemEditFragment extends Fragment {
         mTitle.setText(item.getTitle().toString());
         mDate.setText(DateTimeToStringUtil.getDateToString(item));
         mTime.setText(DateTimeToStringUtil.getTimeToString(item));
-        mLocation.setText("2413 Diamond Oaks, Garland, TX, 75044");
+        if(item.getPlaceName().toString().equals("")){
+            mLocation.setText("Location is not added");
+        } else mLocation.setText(item.getPlaceName().toString());
 
         mTitle.addTextChangedListener(new TextWatcher() {
             @Override
@@ -97,7 +98,8 @@ public class ItemEditFragment extends Fragment {
                 } else{
                     dialogFragment = DatePickerDialogFragment.newInstance(null);
                 }
-                dialogFragment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG), REQUEST_CODE);
+                dialogFragment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
+                        DatePickerDialogFragment.REQUEST_CODE);
                 dialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.TAG);
             }
         });
@@ -112,7 +114,8 @@ public class ItemEditFragment extends Fragment {
                 } else {
                     dialogFramgment = TimePickerDialogFragment.newInstance(null);
                 }
-                dialogFramgment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG), REQUEST_CODE );
+                dialogFramgment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
+                        DatePickerDialogFragment.REQUEST_CODE );
                 dialogFramgment.show(getActivity().getSupportFragmentManager(), TimePickerDialogFragment.TAG);
             }
         });
@@ -121,8 +124,7 @@ public class ItemEditFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO Open PlacePickeer
-                PlacePicker .IntentBuilder builder = new PlacePicker.IntentBuilder();
-
+                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                 //TODO start at a current location
 
                 try {
@@ -145,15 +147,12 @@ public class ItemEditFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         fab.setVisibility(View.VISIBLE);
-        //testChange();
-        //if item is edited
+
         if(isChanged){
             Intent intent = ReminderFragment.createItent(item, position);
-
             Fragment fragment = getTargetFragment();
             fragment.onActivityResult(0, Activity.RESULT_OK, intent);
         }
-
     }
 
     public static Bundle creatBundle(ItemEntity item, int position){
@@ -170,18 +169,29 @@ public class ItemEditFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode==REQUEST_CODE && resultCode == Activity.RESULT_OK){
-            Calendar calendar = (Calendar)data.getSerializableExtra(CALENDAR_EXTRA);
-            item.setDate(calendar.getTimeInMillis());
-            mDate.setText(DateTimeToStringUtil.getDateToString(item));
-            mTime.setText(DateTimeToStringUtil.getTimeToString(item));
-            isChanged = true;
-        } else if(requestCode==PLACE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK){
-            //TODO Handle place data here
-            Place place = PlacePicker.getPlace(getContext(), data);
-            //TODO update the database with place name and it's coords
-            Log.d("ItemEditFragment", place.getName().toString());
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode==PLACE_PICKER_REQUEST_CODE){
+                //TODO Handle place data here
+                Place place = PlacePicker.getPlace(getContext(), data);
+                item.setPlaceName(place.getName().toString());
+                item.setReadableAddress(place.getAddress().toString());
+                mLocation.setText(place.getName());
+                //TODO update the database with place name and it's coords
+                Log.d("ItemEditFragment", place.getName().toString() + " at " + place.getAddress());
 
+            } else if (requestCode==DatePickerDialogFragment.REQUEST_CODE
+                    || requestCode== TimePickerDialogFragment.REQUEST_CODE ){
+                Calendar calendar = (Calendar)data.getSerializableExtra(DatePickerDialogFragment.CALENDAR_EXTRA);
+                item.setDate(calendar.getTimeInMillis());
+                if(requestCode==DatePickerDialogFragment.REQUEST_CODE){
+                    item.setHasDate(true);
+                } else if(requestCode==TimePickerDialogFragment.REQUEST_CODE){
+                    item.setHasTime(true);
+                }
+                mDate.setText(DateTimeToStringUtil.getDateToString(item));
+                mTime.setText(DateTimeToStringUtil.getTimeToString(item));
+                isChanged = true;
+            }
         }
     }
 

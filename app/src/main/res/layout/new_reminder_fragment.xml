@@ -34,32 +34,32 @@
             android:paddingRight="8dp">
 
             <Button
-                android:id="@+id/button5"
+                android:id="@+id/date_picker_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
                 android:layout_weight="1"
                 android:text="Button" />
 
             <Button
-                android:id="@+id/button4"
+                android:id="@+id/time_picker_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
                 android:layout_weight="1"
                 android:text="Button" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/place_picker_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp"
                 android:layout_weight="1"
                 android:text="Button" />
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Button" />
         </LinearLayout>
 
         <LinearLayout

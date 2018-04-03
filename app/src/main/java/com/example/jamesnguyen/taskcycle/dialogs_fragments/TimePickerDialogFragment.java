@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.TimePicker;
-
-import com.example.jamesnguyen.taskcycle.fragments.ItemEditFragment;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
 import java.util.Calendar;
@@ -17,8 +15,8 @@ public class TimePickerDialogFragment extends DialogFragment implements TimePick
 
     public static final String TAG = "TimePickerDialogFragment";
     public static final String DATE_ARGS = "date_args";
-    public static final String HOUR_EXTRA = "hour_extra";
-    public static final String MINUTE_EXTRA = "minute_extra";
+    public static final int REQUEST_CODE = 2;
+    public static final String CALENDAR_EXTRA = "calendar_extra";
 
     Calendar calendar;
 
@@ -44,10 +42,11 @@ public class TimePickerDialogFragment extends DialogFragment implements TimePick
         TimePickerDialogFragment fragment = new TimePickerDialogFragment();
         if(item!=null){
             date.setTimeInMillis(item.getDate());
-            Bundle args = new Bundle();
-            args.putSerializable(DATE_ARGS, date);
-            fragment.setArguments(args);
         }
+        Bundle args = new Bundle();
+        args.putSerializable(DATE_ARGS, date);
+        fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -56,8 +55,8 @@ public class TimePickerDialogFragment extends DialogFragment implements TimePick
         Intent intent = new Intent();
         calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
         calendar.set(Calendar.MINUTE, minute);
-        intent.putExtra(ItemEditFragment.CALENDAR_EXTRA, calendar);
-        getTargetFragment().onActivityResult(ItemEditFragment.REQUEST_CODE,
+        intent.putExtra(CALENDAR_EXTRA, calendar);
+        getTargetFragment().onActivityResult(REQUEST_CODE,
                 Activity.RESULT_OK, intent);
     }
 }
