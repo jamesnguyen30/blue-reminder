@@ -2,6 +2,7 @@ package com.example.jamesnguyen.taskcycle.room;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.content.ClipData;
 import android.os.Parcel;
@@ -27,8 +28,15 @@ public class ItemEntity implements Parcelable {
     @ColumnInfo(name="place_name")
     private String placeName;
 
+    @ColumnInfo(name="has_alarm")
+    private boolean hasAlarm;
+
     @ColumnInfo(name="readable_access")
     private String readableAddress;
+
+    @Ignore
+    boolean isHeader; // for reminder adapter
+
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator<ItemEntity>(){
         @Override
@@ -56,6 +64,7 @@ public class ItemEntity implements Parcelable {
         dest.writeLong(date);
         dest.writeByte((byte)(hasDate?1:0));
         dest.writeByte((byte)(hasTime?1:0));
+        dest.writeByte((byte)(hasAlarm?1:0));
     }
 
     public ItemEntity(Parcel in){
@@ -64,14 +73,20 @@ public class ItemEntity implements Parcelable {
         this.date = in.readLong();
         this.hasDate = in.readByte()!=0;
         this.hasTime = in.readByte()!=0;
+        this.hasAlarm = in.readByte()!=0;
         this.placeName = in.readString();
         this.readableAddress = in.readString();
     }
-    public ItemEntity(String title, long date, boolean hasDate, boolean hasTime, String placeName, String readableAddress) {
+    public ItemEntity(String title,
+                      long date, boolean hasDate,
+                      boolean hasTime, boolean hasAlarm,
+                      String placeName,
+                      String readableAddress) {
         this.title = title;
         this.date = date;
         this.hasDate = hasDate;
         this.hasTime = hasTime;
+        this.hasAlarm = hasAlarm;
         this.placeName = placeName;
         this.readableAddress = readableAddress;
     }
@@ -128,8 +143,15 @@ public class ItemEntity implements Parcelable {
         return readableAddress;
     }
 
-    public void setReadableAddress(String readableAddress) {
-        this.readableAddress = readableAddress;
+    public void setReadableAddress(String readableAddress) { this.readableAddress = readableAddress; }
+
+    public boolean isHasAlarm() { return hasAlarm; }
+
+    public void setHasAlarm(boolean hasAlarm) {
+        this.hasAlarm = hasAlarm;
     }
 
+    public boolean isHeader() { return isHeader; }
+
+    public void setHeader(boolean header) { isHeader = header; }
 }

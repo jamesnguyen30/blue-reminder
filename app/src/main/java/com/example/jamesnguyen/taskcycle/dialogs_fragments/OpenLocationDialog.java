@@ -1,5 +1,6 @@
 package com.example.jamesnguyen.taskcycle.dialogs_fragments;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,6 +65,7 @@ public class OpenLocationDialog extends DialogFragment {
 
         return builder.create();
     }
+
 
     private void startMapOnly(){
         Intent mapIntent= new Intent(Intent.ACTION_VIEW, null);

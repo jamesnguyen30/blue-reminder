@@ -24,6 +24,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <ImageView
+        android:id="@+id/alarm_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/reminder_date"
+        android:src="@drawable/ic_alarm_black_24dp" />
+
     <TextView
         android:id="@+id/reminder_date"
         android:layout_width="wrap_content"
@@ -60,9 +70,24 @@
         android:id="@+id/color_marker_left_border"
         android:layout_width="4dp"
         android:layout_height="59dp"
-          android:background="@android:color/holo_red_dark"
+        android:background="@android:color/holo_red_dark"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/overdue_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginStart="8dp"
+        android:text="Overdue"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@color/lust"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/alarm_icon" />
 
 </android.support.constraint.ConstraintLayout>

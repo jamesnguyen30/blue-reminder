@@ -13,13 +13,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.DatePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.TimePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
+import com.example.jamesnguyen.taskcycle.utils.AlarmManagerUtil;
 import com.example.jamesnguyen.taskcycle.utils.DateTimeToStringUtil;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -34,13 +38,15 @@ public class ItemEditFragment extends Fragment {
     public static final String ITEM_ARGS = "item_data_args";
     public static final String POSITION_ARGS = "position_args";
     //public static int REQUEST_CODE= 1;
-    public static int PLACE_PICKER_REQUEST_CODE = 2;
+    public static int PLACE_PICKER_REQUEST_CODE = 11;
 
     EditText mTitle;
     TextView mDate;
     TextView mTime;
     TextView mLocation;
+    CheckBox mCheckBoxAlarm;
     ItemEntity item;
+
     int position;
     FloatingActionButton fab;
     boolean isChanged;
@@ -63,10 +69,15 @@ public class ItemEditFragment extends Fragment {
         mDate=  view.findViewById(R.id.item_date_edit);
         mTime = view.findViewById(R.id.item_time_edit);
         mLocation = view.findViewById(R.id.item_location_edit);
+        mCheckBoxAlarm = view.findViewById(R.id.set_alarm_check_box);
 
         mTitle.setText(item.getTitle().toString());
+
         mDate.setText(DateTimeToStringUtil.getDateToString(item));
         mTime.setText(DateTimeToStringUtil.getTimeToString(item));
+
+        mCheckBoxAlarm.setChecked(item.isHasAlarm());
+
         if(item.getPlaceName().toString().equals("")){
             mLocation.setText("Location is not added");
         } else mLocation.setText(item.getPlaceName().toString());
@@ -137,6 +148,24 @@ public class ItemEditFragment extends Fragment {
             }
         });
 
+        mCheckBoxAlarm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    isChanged = true;
+                    item.setHasAlarm(isChecked);
+                    if(!AlarmManagerUtil.addAlarm(getContext(), item)){
+                        Toast.makeText(getContext(),"Overdue!",Toast.LENGTH_SHORT).show();
+                        mCheckBoxAlarm.setChecked(false);
+                    }
+                } else {
+                    isChanged = true;
+                    item.setHasAlarm(isChecked);
+                    AlarmManagerUtil.removeAlarm(getContext(), item);
+                }
+            }
+        });
+
         fab = container.getRootView().findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
         return view;
@@ -151,7 +180,8 @@ public class ItemEditFragment extends Fragment {
         if(isChanged){
             Intent intent = ReminderFragment.createItent(item, position);
             Fragment fragment = getTargetFragment();
-            fragment.onActivityResult(0, Activity.RESULT_OK, intent);
+            fragment.onActivityResult(ReminderFragment.REQUEST_CODE,
+                    Activity.RESULT_OK, intent);
         }
     }
 
@@ -169,31 +199,30 @@ public class ItemEditFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK){
-            if(requestCode==PLACE_PICKER_REQUEST_CODE){
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == PLACE_PICKER_REQUEST_CODE) {
                 //TODO Handle place data here
                 Place place = PlacePicker.getPlace(getContext(), data);
                 item.setPlaceName(place.getName().toString());
                 item.setReadableAddress(place.getAddress().toString());
                 mLocation.setText(place.getName());
                 //TODO update the database with place name and it's coords
-                Log.d("ItemEditFragment", place.getName().toString() + " at " + place.getAddress());
+                //Log.d("ItemEditFragment", place.getName().toString() + " at " + place.getAddress());
 
-            } else if (requestCode==DatePickerDialogFragment.REQUEST_CODE
-                    || requestCode== TimePickerDialogFragment.REQUEST_CODE ){
-                Calendar calendar = (Calendar)data.getSerializableExtra(DatePickerDialogFragment.CALENDAR_EXTRA);
+            } else if (requestCode == DatePickerDialogFragment.REQUEST_CODE
+                    || requestCode == TimePickerDialogFragment.REQUEST_CODE) {
+                Calendar calendar = (Calendar) data.getSerializableExtra(DatePickerDialogFragment.CALENDAR_EXTRA);
                 item.setDate(calendar.getTimeInMillis());
-                if(requestCode==DatePickerDialogFragment.REQUEST_CODE){
+                if (requestCode == DatePickerDialogFragment.REQUEST_CODE) {
                     item.setHasDate(true);
-                } else if(requestCode==TimePickerDialogFragment.REQUEST_CODE){
+                } else if (requestCode == TimePickerDialogFragment.REQUEST_CODE) {
                     item.setHasTime(true);
                 }
                 mDate.setText(DateTimeToStringUtil.getDateToString(item));
                 mTime.setText(DateTimeToStringUtil.getTimeToString(item));
-                isChanged = true;
             }
+            isChanged = true;
         }
     }
-
 
 }

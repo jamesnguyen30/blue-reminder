@@ -20,7 +20,7 @@ public class NotificationBuilder {
                                                                String contentTitle,
                                                                String contentDescription){
 
-        Intent intent = creatNewIntent(context, MainActivity.START_DEFAULT_FRAGMENT);
+        Intent intent = createNewIntent(context, MainActivity.START_DEFAULT_FRAGMENT);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         NotificationCompat.Builder builder =
@@ -29,11 +29,12 @@ public class NotificationBuilder {
                 .setContentText(contentDescription)
                 .setContentIntent(pendingIntent)
                 .setSmallIcon(R.drawable.ic_timer_white_24dp)
+                        .setAutoCancel(true)
                 .setOnlyAlertOnce(true);
         return builder;
     }
 
-    private static Intent creatNewIntent(Context context, int fragmentCode){
+    private static Intent createNewIntent(Context context, int fragmentCode){
         Intent intent = MainActivity.createIntent(context, fragmentCode);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;

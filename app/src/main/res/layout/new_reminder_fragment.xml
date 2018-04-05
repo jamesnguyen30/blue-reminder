@@ -27,38 +27,55 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:orientation="horizontal"
             android:padding="0dp"
             android:paddingLeft="8dp"
             android:paddingRight="8dp">
 
-            <Button
+
+            <ImageButton
                 android:id="@+id/date_picker_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_date_range_dark_24dp" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/time_picker_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_access_time_dark_24dp" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/place_picker_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="32dp"
-                android:layout_marginRight="32dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_location_on_dark_24dp" />
+
+            <ImageButton
+                android:id="@+id/color_picker_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_color_lens_dark_24dp" />
+
+            <ImageButton
+                android:id="@+id/set_alarm_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_alarm_black_24dp" />
+
 
         </LinearLayout>
 
@@ -80,8 +97,6 @@
                 android:padding="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
-
         </LinearLayout>
 
     </LinearLayout>

@@ -30,6 +30,7 @@ public class ReminderFragment extends Fragment {
     public static final String TAG = "ReminderFragmentTag";
     public static final String ITEM_EXTRA= "item_extra";
     public static final String POSITION_EXTRA = "position_extra";
+    public static final int REQUEST_CODE = 0;
     RecyclerView mRecyclerView;
     ReminderAdapter mReminderAdapter;
 
@@ -87,7 +88,7 @@ public class ReminderFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode == Activity.RESULT_OK){
+        if(resultCode == Activity.RESULT_OK && requestCode == REQUEST_CODE){
             ItemEntity item = data.getParcelableExtra(ITEM_EXTRA);
             int positon = data.getIntExtra(POSITION_EXTRA, -1);
             mReminderAdapter.onUpdateItemAt(item, positon);

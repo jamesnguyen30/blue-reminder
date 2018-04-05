@@ -3,6 +3,7 @@ package com.example.jamesnguyen.taskcycle.dialogs_fragments;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -58,5 +59,11 @@ public class TimePickerDialogFragment extends DialogFragment implements TimePick
         intent.putExtra(CALENDAR_EXTRA, calendar);
         getTargetFragment().onActivityResult(REQUEST_CODE,
                 Activity.RESULT_OK, intent);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        getTargetFragment().onActivityResult(REQUEST_CODE,
+                Activity.RESULT_CANCELED, null);
     }
 }

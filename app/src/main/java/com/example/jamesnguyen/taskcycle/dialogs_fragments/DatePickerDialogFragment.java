@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -63,5 +64,11 @@ public class DatePickerDialogFragment extends DialogFragment
         intent.putExtra(CALENDAR_EXTRA, calendar);
         getTargetFragment().onActivityResult(REQUEST_CODE,
                 Activity.RESULT_OK, intent);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        getTargetFragment().onActivityResult(REQUEST_CODE,
+                Activity.RESULT_CANCELED, null);
     }
 }

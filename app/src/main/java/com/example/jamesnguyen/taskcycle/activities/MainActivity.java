@@ -1,22 +1,25 @@
 package com.example.jamesnguyen.taskcycle.activities;
 
-import android.app.Dialog;
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.broadcast_receivers.AlarmBroadcastReceiver;
 import com.example.jamesnguyen.taskcycle.fragments.ItemEditFragment;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
@@ -24,9 +27,9 @@ import com.example.jamesnguyen.taskcycle.fragments.SettingFragment;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
 import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
+import com.example.jamesnguyen.taskcycle.utils.AlarmManagerUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiActivity;
 
 import java.util.Calendar;
 
@@ -81,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements
                 startFragmentWithBackStack(START_NEW_ITEM_FRAGMENT, ADD_FLAG, null );
             }
         });
+
+        registerNotificationChannel();
+
     }
 
     public ItemDatabase getDatabase(){
@@ -114,11 +120,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ItemDatabase.destroyInstance();
     }
 
     @Override
-    public void onNewItemCreated(String itemName, Calendar calendar, boolean hasDate, boolean hasTime, String placeName, String readableAddress) {
-        ItemEntity item = new ItemEntity(itemName, calendar.getTimeInMillis(), hasDate, hasTime, placeName, readableAddress);
+    public void onNewItemCreated(ItemEntity newItem) {
+        ItemEntity item = newItem;//AlarmManagerUtil.addWeeklyAlarm(this, item);
         insertItems(item);
         loadByMode(loadMode);
 
@@ -202,6 +209,10 @@ public class MainActivity extends AppCompatActivity implements
     public void deleteItem(ItemEntity item) {
         asyncTask = new LoadItemsTask(LoadItemsTask.DELETE_ITEM, false);
         asyncTask.execute(item);
+        //if item has alarm, removes it
+        if(item.isHasAlarm()){
+            AlarmManagerUtil.removeAlarm(this, item);
+        }
     }
 
     @Override
@@ -217,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements
         for(int i =0;i<10;i++){
             item = new ItemEntity("Item #" + Integer.toString(i)
                     , Calendar.getInstance().getTimeInMillis()
-                    , true, true,
+                    , true, true,false,
                     "","");
             items[i] = item;
         }
@@ -281,10 +292,58 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-
     private boolean checkGooglePlayServices() {
         final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
         //Log.i("MainActivity", GoogleApiAvailability.getInstance().getErrorString(status));
         return status == ConnectionResult.SUCCESS;
     }
+
+
+    private void registerNotificationChannel(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = "Task Cycle";
+            String description = "Reminder Notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            NotificationChannel mChannel = new NotificationChannel("TaskCycleReminder", name, importance);
+            mChannel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = (NotificationManager) getSystemService(
+                    NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(mChannel);
+        }
+    }
+
 }
+
+
+
+//        //TEST : system alarm
+//        Calendar c = Calendar.getInstance();
+//        c.setTimeInMillis(System.currentTimeMillis());
+//        c.set(Calendar.HOUR_OF_DAY,18);
+//        c.set(Calendar.MINUTE, 0);
+//
+//        Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
+//        PendingIntent alarmIntent = PendingIntent.getBroadcast(this,
+//                1,
+//                intent, PendingIntent.FLAG_CANCEL_CURRENT);
+//
+//
+//        AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
+//
+//        am.set(AlarmManager.RTC_WAKEUP,
+//                System.currentTimeMillis() + (5*1000),
+//                alarmIntent);
+//
+//        am.set(AlarmManager.RTC_WAKEUP,
+//                System.currentTimeMillis() + (15*1000),
+//                alarmIntent);
+
+
+//        am.setInexactRepeating(AlarmManager.RTC_WAKEUP,
+//                c.getTimeInMillis(),
+//                AlarmManager.INTERVAL_DAY, alarmIntent);
+
+//register a notification channel for this app

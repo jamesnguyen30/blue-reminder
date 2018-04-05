@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityManagerCompat;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
@@ -23,23 +24,24 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.DatePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.TimePickerDialogFragment;
+import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 import com.example.jamesnguyen.taskcycle.smart_date_detector.MatchedPosition;
 import com.example.jamesnguyen.taskcycle.smart_date_detector.SmartDateDetector;
-import com.example.jamesnguyen.taskcycle.utils.DateTimeToStringUtil;
+import com.example.jamesnguyen.taskcycle.utils.AlarmManagerUtil;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -54,7 +56,7 @@ public class NewItemFragment extends Fragment {
 
     public interface OnNewItemCreated{
         //TODO pass an Item object here,
-        void onNewItemCreated(String title, Calendar calendar, boolean hasDate, boolean hasTime, String placeName, String readableAddress);
+        void onNewItemCreated(ItemEntity newItem);
     }
     SpannableStringBuilder spanBuilder;
     FloatingActionButton fab;
@@ -66,14 +68,17 @@ public class NewItemFragment extends Fragment {
     int previousLength;
     InputMethodManager ipm;
 
-    Button mDatePicker;
-    Button mTimePicker;
-    Button mPlacePicker;
+    ImageButton mDatePicker;
+    ImageButton mTimePicker;
+    ImageButton mPlacePicker;
+    ImageButton mColorPicker;
+    ImageButton mSetAlarm;
 
     String mTitle;
     Calendar mCalendar;
     boolean mHasDate;
     boolean mHasTime;
+    boolean mHasAlarm;
     String mPlaceName;
     String mReadableAddress;
 
@@ -98,6 +103,9 @@ public class NewItemFragment extends Fragment {
         mCalendar = null;
         mPlaceName = "";
         mReadableAddress ="";
+        mHasDate = false;
+        mHasTime = false;
+        mHasAlarm = false;
     }
 
     @Nullable
@@ -113,6 +121,8 @@ public class NewItemFragment extends Fragment {
         mDatePicker = view.findViewById(R.id.date_picker_button);
         mTimePicker = view.findViewById(R.id.time_picker_button);
         mPlacePicker = view.findViewById(R.id.place_picker_button);
+        mColorPicker = view.findViewById(R.id.color_picker_button);
+        mSetAlarm = view.findViewById(R.id.set_alarm_button);
 
         //show keyboard
         ipm =  (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -152,17 +162,23 @@ public class NewItemFragment extends Fragment {
                             mCalendar = dateDetector.convertToCalendar();
                         }
                         //Test
-                        mHasDate = true;
-                        mHasTime = true;
-                        mCallback.onNewItemCreated(
-                                removeDateFromString(v.getText().toString()
-                                        , dateDetector.getMatchedPositions()),
-                                mCalendar,
+                        ItemEntity item = new ItemEntity(
+                                removeDateFromString(v.getText().toString(),
+                                        dateDetector.getMatchedPositions()),
+                                mCalendar.getTimeInMillis(),
                                 mHasDate || dateDetector.isHasDate(),
                                 mHasTime || dateDetector.isHasTime(),
+                                mHasAlarm,
                                 mPlaceName,
-                                mReadableAddress
-                        );
+                                mReadableAddress);
+                        //set alarm here if needed
+
+                        mCallback.onNewItemCreated(item);
+
+                        if(mHasAlarm){
+                            //set alarm
+                            AlarmManagerUtil.addAlarm(getContext(), item);
+                        }
 
                         getActivity().getSupportFragmentManager().popBackStack();
                         return false;
@@ -182,24 +198,36 @@ public class NewItemFragment extends Fragment {
         mDatePicker.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                ipm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-                DatePickerDialogFragment dialogFragment = DatePickerDialogFragment.newInstance(null);
-                dialogFragment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
-                        DatePickerDialogFragment.REQUEST_CODE);
-                dialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.TAG);
-//                mHasDate = true;
+                if(!mHasDate){
+                    ipm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                    DatePickerDialogFragment dialogFragment = DatePickerDialogFragment.newInstance(null);
+                    dialogFragment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
+                            DatePickerDialogFragment.REQUEST_CODE);
+                    dialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.TAG);
+                } else {
+                    mDatePicker.setImageDrawable(
+                            getActivity().getResources()
+                            .getDrawable(R.drawable.ic_date_range_dark_24dp)
+                    );
+                }
             }
         });
 
         mTimePicker.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                ipm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-                TimePickerDialogFragment dialogFragment = TimePickerDialogFragment.newInstance(null);
-                dialogFragment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
-                        TimePickerDialogFragment.REQUEST_CODE);
-                dialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.TAG);
-//                mHasTime = true;
+                if(!mHasTime){
+                    ipm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                    TimePickerDialogFragment dialogFragment = TimePickerDialogFragment.newInstance(null);
+                    dialogFragment.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
+                            TimePickerDialogFragment.REQUEST_CODE);
+                    dialogFragment.show(getActivity().getSupportFragmentManager(), DatePickerDialogFragment.TAG);
+                } else {
+                    mTimePicker.setImageDrawable(
+                            getActivity().getResources()
+                            .getDrawable(R.drawable.ic_access_time_dark_24dp)
+                    );
+                }
             }
         });
 
@@ -208,16 +236,54 @@ public class NewItemFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                //TODO start at a current location
-                try {
-                    startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST_CODE);
-                } catch(GooglePlayServicesRepairableException e){
-                    e.printStackTrace();
-                } catch(GooglePlayServicesNotAvailableException e){
-                    e.printStackTrace();
+                if(mPlaceName.equals("")){
+                    //TODO start at a current location
+                    try {
+                        startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST_CODE);
+                    } catch(GooglePlayServicesRepairableException e){
+                        e.printStackTrace();
+                    } catch(GooglePlayServicesNotAvailableException e){
+                        e.printStackTrace();
+                    }
+                } else {
+                    mPlaceName = "";
+                    mReadableAddress="";
+                    mPlacePicker.setImageDrawable(
+                            getActivity().getResources()
+                            .getDrawable(R.drawable.ic_location_on_dark_24dp)
+                    );
+                }
+
+            }
+        });
+
+        mSetAlarm.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(mHasAlarm==false){
+                    dateDetector.convertToCalendar();
+                    if((mHasDate || dateDetector.isHasDate()) &&
+                            (mHasTime || dateDetector.isHasTime())){
+                        //mHasAlarm = true;
+                        mSetAlarm.setImageDrawable(
+                                getActivity().getResources()
+                                        .getDrawable(R.drawable.ic_alarm_red_24dp)
+                        );
+                        mHasAlarm = true;
+                    } else {
+                        Toast.makeText(getContext(),"Can't set alarm without Date or Time",Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    mSetAlarm.setImageDrawable(
+                            getActivity().getResources()
+                                    .getDrawable(R.drawable.ic_alarm_black_24dp)
+                    );
+                    mHasAlarm = false;
                 }
             }
         });
+
+
 
         return view;
     }
@@ -276,6 +342,10 @@ public class NewItemFragment extends Fragment {
                 mReadableAddress = place.getAddress().toString();
                 //TODO update the database with place name and it's coords
                 Log.d("ItemEditFragment", place.getName().toString() + " at " + place.getAddress());
+                mPlacePicker.setImageDrawable(
+                        getActivity().getResources()
+                        .getDrawable(R.drawable.ic_location_on_red_24dp)
+                );
 
             } else if (requestCode==DatePickerDialogFragment.REQUEST_CODE
                     || requestCode== TimePickerDialogFragment.REQUEST_CODE ){
@@ -283,8 +353,16 @@ public class NewItemFragment extends Fragment {
 
                 if(requestCode==DatePickerDialogFragment.REQUEST_CODE){
                     mHasDate = true;
+                    mDatePicker.setImageDrawable(
+                            getActivity().getResources()
+                            .getDrawable(R.drawable.ic_date_range_red_24dp)
+                    );
                 } else if(requestCode==TimePickerDialogFragment.REQUEST_CODE){
                     mHasTime = true;
+                    mTimePicker.setImageDrawable(
+                            getActivity().getResources()
+                            .getDrawable(R.drawable.ic_access_time_red_24dp)
+                    );
                 }
             }
         }

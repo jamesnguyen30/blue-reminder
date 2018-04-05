@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.OpenLocationDialog;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
+import com.example.jamesnguyen.taskcycle.utils.AlarmManagerUtil;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ import java.util.List;
  */
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
+
 
     public interface ReminderAdapterDbOperations {
         void deleteItem(ItemEntity items);

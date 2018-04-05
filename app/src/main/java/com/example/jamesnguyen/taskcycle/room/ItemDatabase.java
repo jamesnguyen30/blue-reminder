@@ -25,7 +25,6 @@ public abstract class ItemDatabase extends RoomDatabase {
         if(INSTANCE==null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                     ItemDatabase.class, "item-database")
-                    //recreate the database
                     .fallbackToDestructiveMigration()
                     .build();
         }
@@ -73,6 +72,10 @@ public abstract class ItemDatabase extends RoomDatabase {
         items = getItemDao().getItemsBetweenDates(from, to);
         return items;
     }
+
+//    public List<ItemEntity> queryThisWeekItems(){
+//
+//    }
 
     public int getAllItemsCount(){
         return getItemDao().size();
