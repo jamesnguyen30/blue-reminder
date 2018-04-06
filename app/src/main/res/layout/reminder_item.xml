@@ -4,10 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="4dp"
-    android:layout_marginLeft="4dp"
-    android:layout_marginRight="4dp"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:paddingTop="0dp">
 
     <TextView
         android:id="@+id/reminder_title"
@@ -15,6 +13,7 @@
         android:layout_height="30dp"
         android:layout_marginBottom="4dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
         android:text="Reminder Title"
         android:textAppearance="@style/TextAppearance.AppCompat"
@@ -28,16 +27,18 @@
         android:id="@+id/alarm_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
+        android:src="@drawable/ic_alarm_black_24dp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/reminder_date"
-        android:src="@drawable/ic_alarm_black_24dp" />
+        app:layout_constraintStart_toEndOf="@+id/reminder_date" />
 
     <TextView
         android:id="@+id/reminder_date"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -46,7 +47,7 @@
         android:id="@+id/place_name_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:maxLength="20"
         android:text="DownTown Dallas"
@@ -57,6 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
+        android:id="@+id/image_bar"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginEnd="8dp"
@@ -80,13 +82,14 @@
         android:id="@+id/overdue_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="12dp"
         android:layout_marginStart="8dp"
         android:text="Overdue"
         android:textAlignment="center"
         android:textAllCaps="false"
         android:textColor="@color/lust"
         android:textStyle="bold|italic"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/alarm_icon" />
 

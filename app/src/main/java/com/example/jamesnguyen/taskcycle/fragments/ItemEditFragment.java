@@ -192,6 +192,7 @@ public class ItemEditFragment extends Fragment {
         args.putInt(POSITION_ARGS, position);
         return args;
     }
+
     public static ItemEditFragment newInstance(){
         ItemEditFragment fragment = new ItemEditFragment();
         return fragment;
@@ -220,6 +221,7 @@ public class ItemEditFragment extends Fragment {
                 }
                 mDate.setText(DateTimeToStringUtil.getDateToString(item));
                 mTime.setText(DateTimeToStringUtil.getTimeToString(item));
+                mCheckBoxAlarm.setChecked(false);
             }
             isChanged = true;
         }

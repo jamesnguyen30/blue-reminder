@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.R;
@@ -33,6 +36,7 @@ public class ReminderFragment extends Fragment {
     public static final int REQUEST_CODE = 0;
     RecyclerView mRecyclerView;
     ReminderAdapter mReminderAdapter;
+    FloatingActionButton fab;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,10 +50,23 @@ public class ReminderFragment extends Fragment {
         View view = inflater.inflate(R.layout.reminder_list_fragment, container,  false);
         mRecyclerView = view.findViewById(R.id.reminder_list_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        fab = container.getRootView().findViewById(R.id.fab);
         //TODO Turn on loading icon here
         setReminderAdapter();
         setItemTouchHelper();
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((MainActivity)getActivity()).turnOffFabButton(fab);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)getActivity()).turnOnFabButton(fab);
     }
 
     public void setReminderAdapter(){

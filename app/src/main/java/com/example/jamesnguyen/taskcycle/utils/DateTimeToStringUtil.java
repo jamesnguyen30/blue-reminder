@@ -8,12 +8,12 @@ import java.util.Calendar;
 public class DateTimeToStringUtil {
     private static final String HAS_DATE_WITH_TIME = "EEE, M.d.yyyy h:mm a";
     private static final String HAS_DATE = "EEE, M.d.yyyy";
-    private static final String HAS_TIME = "hh:mm";
+    private static final String HAS_TIME = "hh:mm a";
     private static final String NO_DATE ="";
 
     public static String itemEntityToString(ItemEntity item){
         String pattern = NO_DATE;
-        SimpleDateFormat dateFormate = new SimpleDateFormat(HAS_DATE);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(HAS_DATE);
         String result;
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(item.getDate());
@@ -32,7 +32,7 @@ public class DateTimeToStringUtil {
             }
         }
 
-        dateFormate.applyPattern(pattern);
+        dateFormat.applyPattern(pattern);
 //        String today = "Today at ";
 //        if(pattern==HAS_DATE_WITH_TIME || pattern==HAS_DATE){
 //            today = "";
@@ -40,7 +40,7 @@ public class DateTimeToStringUtil {
 //            today = "Today";
 //        }
 
-        result = dateFormate.format(calendar.getTime());
+        result = dateFormat.format(calendar.getTime());
         return result;
     }
 

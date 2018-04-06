@@ -1,9 +1,7 @@
 package com.example.jamesnguyen.taskcycle.activities;
 
-import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -12,14 +10,16 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.example.jamesnguyen.taskcycle.R;
-import com.example.jamesnguyen.taskcycle.broadcast_receivers.AlarmBroadcastReceiver;
 import com.example.jamesnguyen.taskcycle.fragments.ItemEditFragment;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
@@ -46,8 +46,13 @@ public class MainActivity extends AppCompatActivity implements
     private static final String FRAGMENT_CODE_EXTRA = "fragment_code_extra";
     public static final int START_DEFAULT_FRAGMENT = 0;
     public static final int START_NEW_ITEM_FRAGMENT = 1;
-    public static final int START_SETTING_FRAGMNENT = 2;
+    public static final int START_SETTING_FRAGMENT = 2;
     public static final int START_EDIT_FRAGMENT = 3;
+
+    public static final int NEW_FRAGMET_NO_ANIMATION = 0;
+    public static final int NEW_FRAGMENT_ENTER_FROM_LEFT = 1;
+    public static final int NEW_FRAGMENT_ENTER_FROM_RIGHT = 2;
+    public static final int NEW_FRAGMENT_ENTER_FROM_BOTTOM = 3;
 
     LoadItemsTask asyncTask;
     int loadMode;
@@ -59,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         database = ItemDatabase.getInstance(this);
         fab = findViewById(R.id.fab);
+
+//        turnOnFabButton(fab);
         // flag = 0 will load all items
         loadMode = LoadItemsTask.LOAD_ALL_ITEMS;
 
@@ -81,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                startFragmentWithBackStack(START_NEW_ITEM_FRAGMENT, ADD_FLAG, null );
+                startFragmentWithBackStack(START_NEW_ITEM_FRAGMENT, ADD_FLAG, null, 0);
             }
         });
 
@@ -104,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
        if (id == R.id.action_settings) {
-            startFragmentWithBackStack(START_SETTING_FRAGMNENT, REPLACE_FLAG, null );
+            startFragmentWithBackStack(START_SETTING_FRAGMENT, REPLACE_FLAG, null, 0);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -137,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements
         return intent;
     }
 
-    public void startFragmentWithBackStack(int fragmentCode, int stackCode, Bundle argument){
+    public void startFragmentWithBackStack(int fragmentCode, int stackCode, Bundle argument, int animationFlag){
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment;
         String tag;
@@ -165,16 +172,31 @@ public class MainActivity extends AppCompatActivity implements
         if(argument!=null){
             fragment.setArguments(argument);
         }
+
+        FragmentTransaction ft = fm.beginTransaction();
+        switch (animationFlag){
+            default:
+            case NEW_FRAGMET_NO_ANIMATION:
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                break;
+            case NEW_FRAGMENT_ENTER_FROM_BOTTOM:
+                ft.setCustomAnimations(
+                        R.anim.enter_from_right,
+                        R.anim.exit_to_left,
+                        R.anim.pop_enter_from_left,
+                        R.anim.pop_exit_to_right);
+                break;
+
+        }
+
         switch(stackCode){
             default: // default back stack, ReminderFragment is the final element in the stack
-                fm.beginTransaction()
-                        .add(R.id.main_activity_container, fragment, tag)
+                ft.add(R.id.main_activity_container, fragment, tag)
                         .addToBackStack(ReminderFragment.TAG)
                         .commit();
                 break;
             case 1:
-                fm.beginTransaction()
-                        .replace(R.id.main_activity_container, fragment, tag)
+                ft.replace(R.id.main_activity_container, fragment, tag)
                         .addToBackStack(ReminderFragment.TAG)
                         .commit();
                 break;
@@ -298,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements
         return status == ConnectionResult.SUCCESS;
     }
 
-
     private void registerNotificationChannel(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             CharSequence name = "Task Cycle";
@@ -313,6 +334,18 @@ public class MainActivity extends AppCompatActivity implements
                     NOTIFICATION_SERVICE);
             notificationManager.createNotificationChannel(mChannel);
         }
+    }
+
+    public void turnOnFabButton(FloatingActionButton fab){
+        Animation scaleUp = AnimationUtils.loadAnimation(this, R.anim.scale_up);
+        fab.startAnimation(scaleUp);
+        fab.setVisibility(View.VISIBLE);
+    }
+
+    public void turnOffFabButton(FloatingActionButton fab){
+        Animation scaleDown = AnimationUtils.loadAnimation(this, R.anim.scale_down);
+        fab.startAnimation(scaleDown);
+        fab.setVisibility(View.INVISIBLE);
     }
 
 }

@@ -41,13 +41,13 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
         placeName = itemView.findViewById(R.id.place_name_text_view);
         alarmIcon = itemView.findViewById(R.id.alarm_icon);
         overDue = itemView.findViewById(R.id.overdue_text);
-        overDue.setVisibility(View.INVISIBLE);
-        alarmIcon.setVisibility(View.INVISIBLE);
         itemView.setOnClickListener(this);
     }
 
     public void bindView(ItemEntity item){
         this.item = item;
+        overDue.setVisibility(View.INVISIBLE);
+        alarmIcon.setVisibility(View.INVISIBLE);
         reminderTitle.setText(item.getTitle());
         reminderDate.setText(DateTimeToStringUtil.itemEntityToString(item));
         placeName.setText(item.getPlaceName());
@@ -57,11 +57,10 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
             alarmIcon.setVisibility(View.INVISIBLE);
         }
 
-        if (!AlarmManagerUtil.isItmeDateLargerThanCurrent(item)) {
+        if (!AlarmManagerUtil.isItmeDateLargerThanCurrent(item) &&(item.isHasTime() || item.isHasDate())) {
             alarmIcon.setVisibility(View.INVISIBLE);
             overDue.setVisibility(View.VISIBLE);
         }
-
     }
 
     @Override
@@ -69,8 +68,11 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
         Bundle args = ItemEditFragment.creatBundle(item, getAdapterPosition());
         ((MainActivity)context).startFragmentWithBackStack(MainActivity.START_EDIT_FRAGMENT,
                 MainActivity.REPLACE_FLAG,
-                args);
+                args, MainActivity.NEW_FRAGMENT_ENTER_FROM_BOTTOM);
+
     }
+
+
 //
 //    private void showAlarmIcon(){
 //        alarmIcon.setVisibility(View.VISIBLE);

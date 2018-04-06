@@ -72,7 +72,7 @@ public class AlarmManagerUtil {
 
     public static boolean isItmeDateLargerThanCurrent(ItemEntity item){
         Calendar c = Calendar.getInstance();
-        return (item.getDate() > c.getTimeInMillis())?true:false;
+        return item.getDate() > c.getTimeInMillis();
     }
 }
 

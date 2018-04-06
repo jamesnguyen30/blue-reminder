@@ -22,6 +22,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.DatePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.TimePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
@@ -114,7 +117,9 @@ public class NewItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.new_reminder_fragment, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         fab = container.getRootView().findViewById(R.id.fab);
-        fab.setVisibility(View.INVISIBLE);
+
+        ((MainActivity)getActivity()).turnOffFabButton(fab);
+
         mEditText = view.findViewById(R.id.new_reminder_input);
         mBackground = view.findViewById(R.id.new_reminder_framgnet_background);
 
@@ -209,6 +214,7 @@ public class NewItemFragment extends Fragment {
                             getActivity().getResources()
                             .getDrawable(R.drawable.ic_date_range_dark_24dp)
                     );
+                    mHasDate = false;
                 }
             }
         });
@@ -227,6 +233,7 @@ public class NewItemFragment extends Fragment {
                             getActivity().getResources()
                             .getDrawable(R.drawable.ic_access_time_dark_24dp)
                     );
+                    mHasTime = false;
                 }
             }
         });
@@ -307,7 +314,8 @@ public class NewItemFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        fab.setVisibility(View.VISIBLE);
+        //fab.setVisibility(View.VISIBLE);
+        ((MainActivity)getActivity()).turnOnFabButton(fab);
     }
 
     private void buildSpannable(Editable e, int start, int end){

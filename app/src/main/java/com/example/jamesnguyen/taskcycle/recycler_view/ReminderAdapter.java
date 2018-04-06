@@ -75,7 +75,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
         ItemEntity item = items.remove(position);
         count = items.size();
         mCallback.deleteItem(item);
-        notifyDataSetChanged();
+        notifyItemRemoved(position);
     }
 
     public void onUpdateItemAt(ItemEntity item, int position){

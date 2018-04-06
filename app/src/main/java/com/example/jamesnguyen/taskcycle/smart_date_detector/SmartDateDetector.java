@@ -152,6 +152,7 @@ public class SmartDateDetector {
         //set day of the week, recognize next week, next month, next year phrase
         if(groups[1]!=null){
             setDayByPhrase(calendar, groups[1]);
+            hasDate = true;
         } else if(groups[3]!=null){ //if day is already set, ignore group 3
             boolean isNextWeek = false;
             if(groups[2]!=null && groups[2].replaceAll("\\s","").equals("next"))
