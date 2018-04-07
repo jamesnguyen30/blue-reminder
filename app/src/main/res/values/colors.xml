@@ -10,6 +10,7 @@
 
 
     <color name="black">#000000</color>
+    <color name="transparent_black">#97000000</color>
     <color name="highlightYellow">#FFFF33</color>
     <color name="orange">#D35400</color>
     <color name="lust">#EA2B1F</color>

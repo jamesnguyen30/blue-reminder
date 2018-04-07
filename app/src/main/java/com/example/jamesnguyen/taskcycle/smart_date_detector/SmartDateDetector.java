@@ -107,7 +107,7 @@ public class SmartDateDetector {
 
         int minute = 0; //0 minute by default
 
-        if(groups.length<=0){
+        if(groups == null || groups.length<=0){
             return null;
         } else{
             //get the date

@@ -47,6 +47,7 @@ public class ReminderFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.reminder_list_fragment);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         fab = container.getRootView().findViewById(R.id.fab);
+
         //TODO Turn on loading icon here
         setReminderAdapter();
         setItemTouchHelper();

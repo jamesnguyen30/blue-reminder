@@ -14,7 +14,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@color/transparent_grey" />
+        app:srcCompat="@color/transparent_black" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/backgroundInputField">
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_color_lens_dark_24dp"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <ImageButton
                 android:id="@+id/set_alarm_button"
@@ -92,6 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@null"
+
                 android:ems="10"
                 android:hint="eg,. Read the book everyday at 5am"
                 android:inputType="textPersonName"

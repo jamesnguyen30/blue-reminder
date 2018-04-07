@@ -154,4 +154,14 @@ public class ItemEntity implements Parcelable {
     public boolean isHeader() { return isHeader; }
 
     public void setHeader(boolean header) { isHeader = header; }
+
+    public ItemEntity deepCopy(){
+        ItemEntity  item = new ItemEntity(
+                title,
+                date, hasDate, hasTime, hasAlarm,
+                placeName, readableAddress
+        );
+        item.setId(id);
+        return item;
+    }
 }

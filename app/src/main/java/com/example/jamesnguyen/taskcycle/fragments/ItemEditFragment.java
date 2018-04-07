@@ -1,18 +1,23 @@
 package com.example.jamesnguyen.taskcycle.fragments;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -47,9 +52,25 @@ public class ItemEditFragment extends Fragment {
     CheckBox mCheckBoxAlarm;
     ItemEntity item;
 
+    ConstraintLayout mDateEdit;
+    ConstraintLayout mTimeEdit;
+    ConstraintLayout mLocationEdit;
+    ConstraintLayout mSetAlarm;
+
     int position;
     FloatingActionButton fab;
     boolean isChanged;
+
+    ItemEntity tempItem;
+//
+//    String title;
+//    String date;
+//    String time;
+//    String placeName;
+//    String readableAddress;
+//    boolean isHasAlarm;
+//    boolean isHasDate;
+//    boolean isHasTime;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +79,18 @@ public class ItemEditFragment extends Fragment {
         //load arguement
         Bundle args = getArguments();
         item = args.getParcelable(ITEM_ARGS);
+
+        tempItem = item.deepCopy();
+
+//        title = item.getTitle();
+//        date = DateTimeToStringUtil.getDateToString(item);
+//        time = DateTimeToStringUtil.getTimeToString(item);
+//        placeName = item.getPlaceName();
+//        isHasAlarm = item.isHasAlarm();
+//        isHasDate = item.isHasDate();
+//        isHasTime = item.isHasTime();
+//        readableAddress = "";
+
         position = args.getInt(POSITION_ARGS);
     }
 
@@ -66,21 +99,30 @@ public class ItemEditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.edit_item_fragment, container, false);
         mTitle = view.findViewById(R.id.item_title_edit);
-        mDate=  view.findViewById(R.id.item_date_edit);
-        mTime = view.findViewById(R.id.item_time_edit);
-        mLocation = view.findViewById(R.id.item_location_edit);
+        mDate=  view.findViewById(R.id.item_date_textview);
+        mTime = view.findViewById(R.id.item_time_textview);
+        mLocation = view.findViewById(R.id.item_location_textview);
         mCheckBoxAlarm = view.findViewById(R.id.set_alarm_check_box);
+        mDateEdit = view.findViewById(R.id.edit_date);
+        mTimeEdit = view.findViewById(R.id.edit_time);
+        mLocationEdit = view.findViewById(R.id.edit_location);
+        mSetAlarm = view.findViewById(R.id.edit_alarm);
 
-        mTitle.setText(item.getTitle().toString());
+        mTitle.setText(tempItem.getTitle());
 
-        mDate.setText(DateTimeToStringUtil.getDateToString(item));
-        mTime.setText(DateTimeToStringUtil.getTimeToString(item));
 
-        mCheckBoxAlarm.setChecked(item.isHasAlarm());
+        if(tempItem.isHasDate())
+            mDate.setText(DateTimeToStringUtil.getDateToString(tempItem));
+        else
+            mDate.setText("No Date");
 
-        if(item.getPlaceName().toString().equals("")){
+        mTime.setText(DateTimeToStringUtil.getTimeToString(tempItem));
+
+        mCheckBoxAlarm.setChecked(tempItem.isHasAlarm());
+
+        if(tempItem.getPlaceName().equals("")){
             mLocation.setText("Location is not added");
-        } else mLocation.setText(item.getPlaceName().toString());
+        } else mLocation.setText(tempItem.getPlaceName());
 
         mTitle.addTextChangedListener(new TextWatcher() {
             @Override
@@ -95,17 +137,19 @@ public class ItemEditFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                item.setTitle(s.toString());
+                //item.setTitle(s.toString());
+                 tempItem.setTitle(s.toString());
                 isChanged = true;
             }
         });
-        mDate.setOnClickListener(new View.OnClickListener(){
+
+        mDateEdit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 //TODO Open date picker dialog
                 DatePickerDialogFragment dialogFragment;
-                if(item.isHasDate()){
-                    dialogFragment = DatePickerDialogFragment.newInstance(item);
+                if(tempItem.isHasDate()){
+                    dialogFragment = DatePickerDialogFragment.newInstance(tempItem);
                 } else{
                     dialogFragment = DatePickerDialogFragment.newInstance(null);
                 }
@@ -115,13 +159,13 @@ public class ItemEditFragment extends Fragment {
             }
         });
 
-        mTime.setOnClickListener(new View.OnClickListener(){
+        mTimeEdit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 //TODO Open time picker dialog
                 TimePickerDialogFragment dialogFramgment;
-                if(item.isHasTime()){
-                    dialogFramgment = TimePickerDialogFragment.newInstance(item);
+                if(tempItem.isHasTime()){
+                    dialogFramgment = TimePickerDialogFragment.newInstance(tempItem);
                 } else {
                     dialogFramgment = TimePickerDialogFragment.newInstance(null);
                 }
@@ -131,7 +175,7 @@ public class ItemEditFragment extends Fragment {
             }
         });
 
-        mLocation.setOnClickListener(new View.OnClickListener(){
+        mLocationEdit.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 //TODO Open PlacePickeer
@@ -148,26 +192,51 @@ public class ItemEditFragment extends Fragment {
             }
         });
 
-        mCheckBoxAlarm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mSetAlarm.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+            public void onClick(View v) {
+                if(!mCheckBoxAlarm.isChecked()){
                     isChanged = true;
-                    item.setHasAlarm(isChecked);
-                    if(!AlarmManagerUtil.addAlarm(getContext(), item)){
-                        Toast.makeText(getContext(),"Overdue!",Toast.LENGTH_SHORT).show();
-                        mCheckBoxAlarm.setChecked(false);
+                    if(tempItem.isHasDate()) {
+                        if (AlarmManagerUtil.addAlarm(getContext(), tempItem)) {
+                            tempItem.setHasAlarm(true);
+                            mCheckBoxAlarm.setChecked(true);
+                            return;
+                        } else {
+                            Toast.makeText(getContext(), "Overdue!", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "No available date", Toast.LENGTH_SHORT).show();
                     }
+                    tempItem.setHasAlarm(false);
+                    mCheckBoxAlarm.setChecked(false);
                 } else {
                     isChanged = true;
-                    item.setHasAlarm(isChecked);
-                    AlarmManagerUtil.removeAlarm(getContext(), item);
+                    //item.setHasAlarm(false);
+                    tempItem.setHasAlarm(false);
+                    mCheckBoxAlarm.setChecked(false);
+                    AlarmManagerUtil.removeAlarm(getContext(), tempItem);
                 }
             }
         });
 
-        fab = container.getRootView().findViewById(R.id.fab);
-        fab.setVisibility(View.INVISIBLE);
+        fab = view.findViewById(R.id.save_edit_item);
+        turnOnFabButton(fab);
+
+        fab.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(isChanged){
+                    item = tempItem.deepCopy();
+                    Intent intent = ReminderFragment.createItent(item, position);
+                    Fragment fragment = getTargetFragment();
+                    fragment.onActivityResult(ReminderFragment.REQUEST_CODE,
+                            Activity.RESULT_OK, intent);
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }
+            }
+        });
+
         return view;
 
     }
@@ -175,19 +244,12 @@ public class ItemEditFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        fab.setVisibility(View.VISIBLE);
-
-        if(isChanged){
-            Intent intent = ReminderFragment.createItent(item, position);
-            Fragment fragment = getTargetFragment();
-            fragment.onActivityResult(ReminderFragment.REQUEST_CODE,
-                    Activity.RESULT_OK, intent);
-        }
+        turnOffFabButton(fab);
     }
 
     public static Bundle creatBundle(ItemEntity item, int position){
+
         Bundle args = new Bundle();
-        //args.putSerializable(item);
         args.putParcelable(ITEM_ARGS, item);
         args.putInt(POSITION_ARGS, position);
         return args;
@@ -204,27 +266,44 @@ public class ItemEditFragment extends Fragment {
             if (requestCode == PLACE_PICKER_REQUEST_CODE) {
                 //TODO Handle place data here
                 Place place = PlacePicker.getPlace(getContext(), data);
-                item.setPlaceName(place.getName().toString());
-                item.setReadableAddress(place.getAddress().toString());
+                tempItem.setPlaceName(place.getName().toString());
+                tempItem.setReadableAddress(place.getAddress().toString());
                 mLocation.setText(place.getName());
                 //TODO update the database with place name and it's coords
-                //Log.d("ItemEditFragment", place.getName().toString() + " at " + place.getAddress());
 
             } else if (requestCode == DatePickerDialogFragment.REQUEST_CODE
                     || requestCode == TimePickerDialogFragment.REQUEST_CODE) {
                 Calendar calendar = (Calendar) data.getSerializableExtra(DatePickerDialogFragment.CALENDAR_EXTRA);
-                item.setDate(calendar.getTimeInMillis());
+                tempItem.setDate(calendar.getTimeInMillis());
                 if (requestCode == DatePickerDialogFragment.REQUEST_CODE) {
-                    item.setHasDate(true);
+                    tempItem.setHasDate(true);
                 } else if (requestCode == TimePickerDialogFragment.REQUEST_CODE) {
-                    item.setHasTime(true);
+                    tempItem.setHasTime(true);
                 }
-                mDate.setText(DateTimeToStringUtil.getDateToString(item));
-                mTime.setText(DateTimeToStringUtil.getTimeToString(item));
+                mDate.setText(DateTimeToStringUtil.getDateToString(tempItem));
+                mTime.setText(DateTimeToStringUtil.getTimeToString(tempItem));
                 mCheckBoxAlarm.setChecked(false);
             }
             isChanged = true;
         }
     }
+
+    private void turnOnFabButton(FloatingActionButton fab){
+        Animation scaleUp = AnimationUtils.loadAnimation(getContext(), R.anim.scale_up);
+        fab.startAnimation(scaleUp);
+        fab.setVisibility(View.VISIBLE);
+    }
+
+    private void turnOffFabButton(FloatingActionButton fab){
+        Animation scaleDown = AnimationUtils.loadAnimation(getContext(), R.anim.scale_down);
+        fab.startAnimation(scaleDown);
+        fab.setVisibility(View.INVISIBLE);
+    }
+
+//    private void wrapTextView(TextView tv, String content){
+//        if(content.length() > tv.getWidth()){
+//
+//        }
+//    }
 
 }

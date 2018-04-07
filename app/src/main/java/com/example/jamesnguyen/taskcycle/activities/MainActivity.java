@@ -7,12 +7,17 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements
         NewItemFragment.OnNewItemCreated, ReminderAdapter.ReminderAdapterDbOperations{
 
     FloatingActionButton fab;
+    DrawerLayout mDrawerLayout;
+    NavigationView mNavigationView;
     //mock ItemDatabase
 //    ReminderDatabaseMock database;
     ItemDatabase database;
@@ -64,15 +71,35 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         database = ItemDatabase.getInstance(this);
         fab = findViewById(R.id.fab);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.navigation_view);
 
-//        turnOnFabButton(fab);
-        // flag = 0 will load all items
+        mNavigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                        int id = item.getItemId();
+                        switch(id){
+                            default:
+                            case R.id.all_items:
+                                mDrawerLayout.closeDrawer(Gravity.LEFT);
+                                return true;
+                        }
+                    }
+                }
+        );
+
+
         loadMode = LoadItemsTask.LOAD_ALL_ITEMS;
 
         //populateDb();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(ReminderFragment.TAG);
         if(fragment==null) {
             fragment = ReminderFragment.newInstance();
@@ -80,8 +107,6 @@ public class MainActivity extends AppCompatActivity implements
                     .add(R.id.main_activity_container, fragment, ReminderFragment.TAG)
                     .commit();
 
-            //Start loading data for fragment
-            //runDbOperationAndUpdateReminderFragment(null);
             loadByMode(loadMode);
         }
 
@@ -91,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements
                 startFragmentWithBackStack(START_NEW_ITEM_FRAGMENT, ADD_FLAG, null, 0);
             }
         });
+        turnOnFabButton(fab);
 
         registerNotificationChannel();
 
@@ -110,9 +136,14 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-       if (id == R.id.action_settings) {
-            startFragmentWithBackStack(START_SETTING_FRAGMENT, REPLACE_FLAG, null, 0);
-            return true;
+        switch (id){
+            case R.id.action_settings:
+                startFragmentWithBackStack(START_SETTING_FRAGMENT, REPLACE_FLAG, null, 0);
+                return true;
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -349,34 +380,3 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 }
-
-
-
-//        //TEST : system alarm
-//        Calendar c = Calendar.getInstance();
-//        c.setTimeInMillis(System.currentTimeMillis());
-//        c.set(Calendar.HOUR_OF_DAY,18);
-//        c.set(Calendar.MINUTE, 0);
-//
-//        Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
-//        PendingIntent alarmIntent = PendingIntent.getBroadcast(this,
-//                1,
-//                intent, PendingIntent.FLAG_CANCEL_CURRENT);
-//
-//
-//        AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
-//
-//        am.set(AlarmManager.RTC_WAKEUP,
-//                System.currentTimeMillis() + (5*1000),
-//                alarmIntent);
-//
-//        am.set(AlarmManager.RTC_WAKEUP,
-//                System.currentTimeMillis() + (15*1000),
-//                alarmIntent);
-
-
-//        am.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-//                c.getTimeInMillis(),
-//                AlarmManager.INTERVAL_DAY, alarmIntent);
-
-//register a notification channel for this app

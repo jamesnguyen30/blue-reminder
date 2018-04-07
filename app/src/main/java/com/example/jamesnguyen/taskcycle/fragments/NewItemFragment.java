@@ -303,6 +303,7 @@ public class NewItemFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ipm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        ((MainActivity)getActivity()).turnOffFabButton(fab);
     }
 
     @Override
@@ -314,7 +315,6 @@ public class NewItemFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //fab.setVisibility(View.VISIBLE);
         ((MainActivity)getActivity()).turnOnFabButton(fab);
     }
 
