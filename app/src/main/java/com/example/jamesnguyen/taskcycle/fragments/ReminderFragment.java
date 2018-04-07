@@ -12,14 +12,10 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-
 import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.item_touch_helper.ItemTouchHelperCallback;
 import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
-import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 
 import java.util.List;

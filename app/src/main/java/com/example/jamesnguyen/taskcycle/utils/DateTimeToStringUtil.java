@@ -33,12 +33,6 @@ public class DateTimeToStringUtil {
         }
 
         dateFormat.applyPattern(pattern);
-//        String today = "Today at ";
-//        if(pattern==HAS_DATE_WITH_TIME || pattern==HAS_DATE){
-//            today = "";
-//        } else if(pattern == NO_DATE){
-//            today = "Today";
-//        }
 
         result = dateFormat.format(calendar.getTime());
         return result;

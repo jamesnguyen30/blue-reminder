@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#346AFE</color>
+    <color name="colorPrimaryDark">#2351D1</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name='fab_button_background_color'>#FF3E80</color>
+    <color name='icon_off_color'>#A7B6C5</color>
+    <color name="secondary_background_color">#F1F5F7</color>
+
 
     <color name="black">#000000</color>
     <color name="highlightYellow">#FFFF33</color>
@@ -15,6 +20,8 @@
     <color name="yellow_green">#9FCC2E</color>
     <color name="grey">#80acbdba</color>
     <color name="transparent_grey">#d9acbdba</color>
+
+    <!--My Theme -->
 
 
 </resources>
