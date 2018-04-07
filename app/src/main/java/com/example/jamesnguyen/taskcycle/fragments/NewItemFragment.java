@@ -7,8 +7,10 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityManagerCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.menu.MenuBuilder;
+import android.support.v7.view.menu.MenuPopupHelper;
+import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -19,16 +21,17 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +55,7 @@ import java.util.List;
  * Created by jamesnguyen on 3/17/18.
  */
 
-public class NewItemFragment extends Fragment {
+public class NewItemFragment extends Fragment implements PopupMenu.OnMenuItemClickListener{
 
     public static final String TAG = "NewItemFragmentTag";
     private static final int PLACE_PICKER_REQUEST_CODE = 4;
@@ -76,6 +79,8 @@ public class NewItemFragment extends Fragment {
     ImageButton mPlacePicker;
     ImageButton mColorPicker;
     ImageButton mSetAlarm;
+
+    PopupMenu popupMenu;
 
     String mTitle;
     Calendar mCalendar;
@@ -290,9 +295,44 @@ public class NewItemFragment extends Fragment {
             }
         });
 
+        mColorPicker.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //Show popup
+                showMenu(v);
 
-
+            }
+        });
         return view;
+    }
+
+    public void showMenu(View view){
+        popupMenu = new PopupMenu(getContext(), view);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.color_picker_menu);
+        popupMenu.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.priority_urgent_and_important:
+
+                //color red this item
+                return true;
+            case R.id.priority_urgent:
+
+                //color orange this item
+                return true;
+
+            case R.id.priority_important:
+
+                //color grene this item
+                return true;
+            default:
+                return true;
+        }
     }
 
     public static NewItemFragment newInstance(){

@@ -66,7 +66,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_color_lens_dark_24dp"
+                android:src="@drawable/ic_crop_square_black_24dp"
                 android:visibility="visible" />
 
             <ImageButton
