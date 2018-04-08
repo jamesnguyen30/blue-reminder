@@ -7,6 +7,14 @@
     android:background="@color/white"
     android:paddingTop="0dp">
 
+    <ImageView
+        android:id="@+id/color_straight_bar"
+        android:layout_width="4dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
     <TextView
         android:id="@+id/reminder_title"
         android:layout_width="wrap_content"

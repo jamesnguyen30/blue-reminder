@@ -53,6 +53,11 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderViewHolder> {
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
+    @Override
     public void onBindViewHolder(ReminderViewHolder holder, int position) {
         //holder.bindView(database.getReminderAt(position));
         //ItemEntity item = db.queryTodayItems().get(position);

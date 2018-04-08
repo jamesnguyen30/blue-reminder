@@ -11,6 +11,7 @@
 
     <color name="black">#000000</color>
     <color name="transparent_black">#97000000</color>
+
     <color name="highlightYellow">#FFFF33</color>
     <color name="orange">#D35400</color>
     <color name="lust">#EA2B1F</color>
@@ -18,23 +19,23 @@
     <!--Reminder Item Colors-->
 
     <color name="red_preset">#ff5722</color>
-    <color name="red_light">#ff8a50</color>
+    <color name="red_light">#f5e7e0</color>
     <color name="red_dark">#c41c00</color>
 
     <color name="blue_preset">#03a9f4</color>
-    <color name="blue_light">#67daff</color>
+    <color name="blue_light">#bee6f4</color>
     <color name="blue_dark">#007ac1</color>
 
     <color name="purple_preset">#673ab7</color>
-    <color name="purple_light">#9a67ea</color>
+    <color name="purple_light">#dad2e7</color>
     <color name="purple_dark">#320b86</color>
 
     <color name="green_preset">#4caf50</color>
-    <color name="green_light">#80e27e</color>
+    <color name="green_light">#e6f2e6</color>
     <color name="green_dark">#087f23</color>
 
     <color name="orange_preset">#ff9800</color>
-    <color name="orange_light">#ffc947</color>
+    <color name="orange_light">#ffedc2</color>
     <color name="orange_dark">#c66900</color>
 
 

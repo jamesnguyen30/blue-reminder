@@ -29,7 +29,9 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
     TextView overDue;
     Calendar calendar;
     ItemEntity item;
+    ImageView straightBar;
 
+    View itemView;
     Context context;
 
     public ReminderViewHolder(View itemView, Context context) {
@@ -41,7 +43,10 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
         placeName = itemView.findViewById(R.id.place_name_text_view);
         alarmIcon = itemView.findViewById(R.id.alarm_icon);
         overDue = itemView.findViewById(R.id.overdue_text);
+        straightBar = itemView.findViewById(R.id.color_straight_bar);
         itemView.setOnClickListener(this);
+        this.itemView = itemView;
+
     }
 
     public void bindView(ItemEntity item){
@@ -61,7 +66,10 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
             alarmIcon.setVisibility(View.INVISIBLE);
             overDue.setVisibility(View.VISIBLE);
         }
+        setPriority(item.getPriority(), itemView);
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -70,6 +78,40 @@ public class ReminderViewHolder extends RecyclerView.ViewHolder implements View.
                 MainActivity.REPLACE_FLAG,
                 args, MainActivity.NEW_FRAGMENT_ENTER_FROM_BOTTOM);
 
+    }
+
+    private void setPriority(int priority, View itemView){
+        switch (priority) {
+            default:
+            case ItemEntity.PRIORITY_DEFAULT:
+                straightBar.setBackgroundColor(
+                        context.getResources().getColor(R.color.blue_dark)
+                );
+                itemView.setBackgroundColor(
+                        context.getResources().getColor(R.color.white));
+                break;
+            case ItemEntity.PRIORITY_IMPORTANT:
+                straightBar.setBackgroundColor(
+                        context.getResources().getColor(R.color.green_dark)
+                );
+                itemView.setBackgroundColor(
+                        context.getResources().getColor(R.color.green_light));
+                break;
+            case ItemEntity.PRIORITY_URGENT:
+                straightBar.setBackgroundColor(
+                        context.getResources().getColor(R.color.purple_dark)
+                );
+                itemView.setBackgroundColor(
+                        context.getResources().getColor(R.color.purple_light));
+                break;
+            case ItemEntity.PRIORITY_URGENT_AND_IMPORTANT:
+                straightBar.setBackgroundColor(
+                        context.getResources().getColor(R.color.red_dark)
+                );
+                itemView.setBackgroundColor(
+                        context.getResources().getColor(R.color.red_light));
+                break;
+        }
     }
 
 

@@ -11,4 +11,8 @@
         android:id="@+id/priority_important"
         android:title="Important"/>
 
+    <item
+        android:id="@+id/priority_default"
+        android:title="Normal"/>
+
 </menu>

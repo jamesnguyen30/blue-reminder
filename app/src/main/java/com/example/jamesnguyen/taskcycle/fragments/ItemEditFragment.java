@@ -8,24 +8,23 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jamesnguyen.taskcycle.R;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.DatePickerDialogFragment;
+import com.example.jamesnguyen.taskcycle.dialogs_fragments.PriorityPickerDialog;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.TimePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 import com.example.jamesnguyen.taskcycle.utils.AlarmManagerUtil;
@@ -51,15 +50,19 @@ public class ItemEditFragment extends Fragment {
     TextView mLocation;
     CheckBox mCheckBoxAlarm;
     ItemEntity item;
+    ImageView mPriorityIcon;
+    TextView mPriorityText;
 
     ConstraintLayout mDateEdit;
     ConstraintLayout mTimeEdit;
     ConstraintLayout mLocationEdit;
     ConstraintLayout mSetAlarm;
+    ConstraintLayout mPriorityEdit;
 
     int position;
     FloatingActionButton fab;
     boolean isChanged;
+    int priority;
 
     ItemEntity tempItem;
 //
@@ -107,6 +110,9 @@ public class ItemEditFragment extends Fragment {
         mTimeEdit = view.findViewById(R.id.edit_time);
         mLocationEdit = view.findViewById(R.id.edit_location);
         mSetAlarm = view.findViewById(R.id.edit_alarm);
+        mPriorityEdit = view.findViewById(R.id.edit_priority);
+        mPriorityIcon = view.findViewById(R.id.priority_icon);
+        mPriorityText = view.findViewById(R.id.priority_textview);
 
         mTitle.setText(tempItem.getTitle());
 
@@ -124,6 +130,8 @@ public class ItemEditFragment extends Fragment {
             mLocation.setText("Location is not added");
         } else mLocation.setText(tempItem.getPlaceName());
 
+        setPriorityText(tempItem.getPriority());
+
         mTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -140,6 +148,20 @@ public class ItemEditFragment extends Fragment {
                 //item.setTitle(s.toString());
                  tempItem.setTitle(s.toString());
                 isChanged = true;
+            }
+        });
+
+        mPriorityEdit.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                //TODO Show priority picker dialog
+                PriorityPickerDialog dialogFramgnet = new PriorityPickerDialog();
+                dialogFramgnet.setTargetFragment(getActivity().getSupportFragmentManager().findFragmentByTag(TAG),
+                        PriorityPickerDialog.REQUEST_CODE);
+                dialogFramgnet.show(
+                        getActivity().getSupportFragmentManager(),
+                        PriorityPickerDialog.TAG
+                );
             }
         });
 
@@ -195,8 +217,8 @@ public class ItemEditFragment extends Fragment {
         mSetAlarm.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                isChanged = true;
                 if(!mCheckBoxAlarm.isChecked()){
-                    isChanged = true;
                     if(tempItem.isHasDate()) {
                         if (AlarmManagerUtil.addAlarm(getContext(), tempItem)) {
                             tempItem.setHasAlarm(true);
@@ -211,14 +233,13 @@ public class ItemEditFragment extends Fragment {
                     tempItem.setHasAlarm(false);
                     mCheckBoxAlarm.setChecked(false);
                 } else {
-                    isChanged = true;
-                    //item.setHasAlarm(false);
                     tempItem.setHasAlarm(false);
                     mCheckBoxAlarm.setChecked(false);
                     AlarmManagerUtil.removeAlarm(getContext(), tempItem);
                 }
             }
         });
+
 
         fab = view.findViewById(R.id.save_edit_item);
         turnOnFabButton(fab);
@@ -232,13 +253,12 @@ public class ItemEditFragment extends Fragment {
                     Fragment fragment = getTargetFragment();
                     fragment.onActivityResult(ReminderFragment.REQUEST_CODE,
                             Activity.RESULT_OK, intent);
-                    getActivity().getSupportFragmentManager().popBackStack();
                 }
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 
         return view;
-
     }
 
     @Override
@@ -275,14 +295,16 @@ public class ItemEditFragment extends Fragment {
                     || requestCode == TimePickerDialogFragment.REQUEST_CODE) {
                 Calendar calendar = (Calendar) data.getSerializableExtra(DatePickerDialogFragment.CALENDAR_EXTRA);
                 tempItem.setDate(calendar.getTimeInMillis());
-                if (requestCode == DatePickerDialogFragment.REQUEST_CODE) {
-                    tempItem.setHasDate(true);
-                } else if (requestCode == TimePickerDialogFragment.REQUEST_CODE) {
-                    tempItem.setHasTime(true);
-                }
+                tempItem.setHasDate(true);
+                tempItem.setHasTime(true);
                 mDate.setText(DateTimeToStringUtil.getDateToString(tempItem));
                 mTime.setText(DateTimeToStringUtil.getTimeToString(tempItem));
                 mCheckBoxAlarm.setChecked(false);
+            } else if(requestCode == PriorityPickerDialog.REQUEST_CODE){
+
+                priority = data.getIntExtra(PriorityPickerDialog.PRIORITY_EXTRA, 0);
+                tempItem.setPriority(priority);
+                setPriorityText(priority);
             }
             isChanged = true;
         }
@@ -300,10 +322,35 @@ public class ItemEditFragment extends Fragment {
         fab.setVisibility(View.INVISIBLE);
     }
 
-//    private void wrapTextView(TextView tv, String content){
-//        if(content.length() > tv.getWidth()){
-//
-//        }
-//    }
+    private void setPriorityText(int priority){
+
+        switch (priority) {
+            default:
+            case ItemEntity.PRIORITY_DEFAULT:
+                mPriorityText.setText("Normal");
+                mPriorityIcon.setImageDrawable(
+                        getResources().getDrawable(R.drawable.solid_circle_blue)
+                );
+                break;
+            case ItemEntity.PRIORITY_IMPORTANT:
+                mPriorityText.setText("Important");
+                mPriorityIcon.setImageDrawable(
+                        getResources().getDrawable(R.drawable.solid_circle_green)
+                );
+                break;
+            case ItemEntity.PRIORITY_URGENT:
+                mPriorityText.setText("Urgent");
+                mPriorityIcon.setImageDrawable(
+                        getResources().getDrawable(R.drawable.solid_circle_purple)
+                );
+                break;
+            case ItemEntity.PRIORITY_URGENT_AND_IMPORTANT:
+                mPriorityText.setText("Urgent and Important");
+                mPriorityIcon.setImageDrawable(
+                        getResources().getDrawable(R.drawable.solid_circle_red)
+                );
+                break;
+        }
+    }
 
 }

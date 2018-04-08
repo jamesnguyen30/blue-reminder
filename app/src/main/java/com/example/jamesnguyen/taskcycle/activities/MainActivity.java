@@ -16,7 +16,9 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,14 +41,16 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements
-        NewItemFragment.OnNewItemCreated, ReminderAdapter.ReminderAdapterDbOperations{
+        NewItemFragment.OnNewItemCreated,
+        ReminderAdapter.ReminderAdapterDbOperations,
+        NavigationView.OnNavigationItemSelectedListener{
 
     FloatingActionButton fab;
     DrawerLayout mDrawerLayout;
     NavigationView mNavigationView;
-    //mock ItemDatabase
-//    ReminderDatabaseMock database;
+    Toolbar toolbar;
     ItemDatabase database;
+
     public static final int ADD_FLAG = 0;
     public static final int REPLACE_FLAG = 1;
 
@@ -74,27 +78,14 @@ public class MainActivity extends AppCompatActivity implements
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.navigation_view);
 
-        mNavigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        int id = item.getItemId();
-                        switch(id){
-                            default:
-                            case R.id.all_items:
-                                mDrawerLayout.closeDrawer(Gravity.LEFT);
-                                return true;
-                        }
-                    }
-                }
-        );
-
+        mNavigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.setItemIconTintList(null);
 
         loadMode = LoadItemsTask.LOAD_ALL_ITEMS;
 
         //populateDb();
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -137,9 +128,9 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         switch (id){
-            case R.id.action_settings:
-                startFragmentWithBackStack(START_SETTING_FRAGMENT, REPLACE_FLAG, null, 0);
-                return true;
+//            case R.id.action_settings:
+//                startFragmentWithBackStack(START_SETTING_FRAGMENT, REPLACE_FLAG, null, 0);
+//                return true;
             case android.R.id.home:
                 mDrawerLayout.openDrawer(Gravity.LEFT);
                 return true;
@@ -159,6 +150,55 @@ public class MainActivity extends AppCompatActivity implements
     protected void onDestroy() {
         super.onDestroy();
         ItemDatabase.destroyInstance();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        FragmentManager fm;
+        Log.d("MainActivity", "Here : " + Integer.toString(id));
+
+        fm = getSupportFragmentManager();
+        for (int i = 0; i < fm.getBackStackEntryCount(); i++) {
+            fm.popBackStack();
+        }
+
+        switch (id) {
+            default:
+            case R.id.all_items:
+                loadMode = LoadItemsTask.LOAD_ALL_ITEMS;
+                break;
+
+            case R.id.today_items:
+                loadMode = LoadItemsTask.LOAD_TODAY_ITEMS;
+                break;
+
+            case R.id.default_items:
+                loadMode = LoadItemsTask.LOAD_DEFAULT_ITEMS;
+                break;
+
+            case R.id.important_items:
+                loadMode = LoadItemsTask.LOAD_IMPORTANT_ITEMS;
+                break;
+
+            case R.id.urgent_items:
+                loadMode = LoadItemsTask.LOAD_URGENT_ITEMS;
+                break;
+
+            case R.id.urgent_and_important_items:
+                loadMode = LoadItemsTask.LOAD_URGENT_AND_IMPORTANT_ITEMS;
+                break;
+
+            case R.id.nav_settings:
+                //TODO start Settings fragment here instead of Action Menu
+                startFragmentWithBackStack(START_SETTING_FRAGMENT, REPLACE_FLAG, null, 0);
+                mDrawerLayout.closeDrawer(Gravity.LEFT);
+                return true;
+        }
+
+        loadByMode(loadMode);
+        mDrawerLayout.closeDrawer(Gravity.LEFT);
+        return true;
     }
 
     @Override
@@ -182,18 +222,19 @@ public class MainActivity extends AppCompatActivity implements
 
         switch(fragmentCode){
             default:
+            case START_DEFAULT_FRAGMENT:
                 fragment = ReminderFragment.newInstance();
                 tag = ReminderFragment.TAG;
                 break;
-            case 1:
+            case START_NEW_ITEM_FRAGMENT:
                 fragment = NewItemFragment.newInstance();
                 tag = NewItemFragment.TAG;
                 break;
-            case 2:
+            case START_SETTING_FRAGMENT:
                 fragment = SettingFragment.newInstance();
                 tag = SettingFragment.TAG;
                 break;
-            case 3:
+            case START_EDIT_FRAGMENT:
                 fragment = ItemEditFragment.newInstance();
                 tag = ItemEditFragment.TAG;
                 fragment.setTargetFragment(fm.findFragmentByTag(ReminderFragment.TAG), 0);
@@ -280,7 +321,7 @@ public class MainActivity extends AppCompatActivity implements
         ItemEntity item;
         for(int i =0;i<10;i++){
             item = new ItemEntity("Item #" + Integer.toString(i)
-                    , Calendar.getInstance().getTimeInMillis()
+                    , 0, Calendar.getInstance().getTimeInMillis()
                     , true, true,false,
                     "","");
             items[i] = item;
@@ -295,6 +336,10 @@ public class MainActivity extends AppCompatActivity implements
         public final static int SAVE_ITEM = 2;
         public final static int DELETE_ITEM = 3;
         public final static int UPDATE_ITEM = 4;
+        public static final int LOAD_DEFAULT_ITEMS = 5;
+        public static final int LOAD_IMPORTANT_ITEMS = 6;
+        public static final int LOAD_URGENT_ITEMS = 7;
+        public static final int LOAD_URGENT_AND_IMPORTANT_ITEMS = 8;
 
         boolean updateReminderFragment;
         int flag;
@@ -309,21 +354,40 @@ public class MainActivity extends AppCompatActivity implements
             //load datbase to item list
             switch(flag){
                 default:
-                case 0:
+                case LOAD_ALL_ITEMS :
                     database.queryAllItems();
+                    //setToolBarText("All Items");
                     break;
-                case 1:
+                case LOAD_TODAY_ITEMS:
                     database.queryTodayItems();
+                    //setToolBarText("Today");
                     break;
-                case 2 :
+                case SAVE_ITEM :
                     database.insertNewItem(itemEntities);
                     break;
-                case 3:
+                case DELETE_ITEM:
                     database.deleteItem(itemEntities);
                     break;
-                case 4:
+                case UPDATE_ITEM:
                     database.updateItem(itemEntities);
                     break;
+                case LOAD_DEFAULT_ITEMS:
+                    database.queryItemsByPriority(0);
+                    //setToolBarText("Default");
+                    break;
+                case LOAD_IMPORTANT_ITEMS:
+                    database.queryItemsByPriority(1);
+                    //setToolBarText("Important");
+                    break;
+                case LOAD_URGENT_ITEMS:
+                    database.queryItemsByPriority(2);
+                    //setToolBarText("Urgent");
+                    break;
+                case LOAD_URGENT_AND_IMPORTANT_ITEMS:
+                    //setToolBarText("Urgent and Important");
+                    database.queryItemsByPriority(3);
+                    break;
+
             }
             return null;
         }
@@ -379,4 +443,7 @@ public class MainActivity extends AppCompatActivity implements
         fab.setVisibility(View.INVISIBLE);
     }
 
+    public void setToolBarText(String text){
+        toolbar.setTitle(text);
+    }
 }

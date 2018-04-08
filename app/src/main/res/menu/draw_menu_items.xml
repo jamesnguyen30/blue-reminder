@@ -10,10 +10,26 @@
             android:id="@+id/today_items"
             android:icon="@drawable/ic_today_dark_24dp"
             android:title="Today"/>
+    </group>
 
-        <item android:icon="@drawable/ic_crop_square_black_24dp"
-            android:id="@+id/grouped_items"
-            android:title="Groups"/>
+    <group android:id="@+id/group4">
+
+        <item android:icon="@drawable/solid_circle_red"
+            android:id="@+id/urgent_and_important_items"
+            android:title="Urgent and Important"/>
+
+        <item android:icon="@drawable/solid_circle_purple"
+            android:id="@+id/urgent_items"
+            android:title="Urgent"/>
+
+        <item android:icon="@drawable/solid_circle_green"
+            android:id="@+id/important_items"
+            android:title="Important"/>
+
+        <item android:icon="@drawable/solid_circle_blue"
+            android:id="@+id/default_items"
+            android:title="Default"/>
+
     </group>
 
     <group

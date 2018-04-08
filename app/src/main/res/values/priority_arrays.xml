@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="priority_array">
+        <item name="Urgent and Important">3</item>
+        <item name="Urgent">2</item>
+        <item name="Important">1</item>
+        <item name="Normal">0</item>
+    </integer-array>
+</resources>

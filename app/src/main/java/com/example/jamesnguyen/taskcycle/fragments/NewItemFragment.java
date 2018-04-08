@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v7.view.menu.MenuBuilder;
-import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.widget.PopupMenu;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
@@ -21,7 +19,6 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,6 +80,7 @@ public class NewItemFragment extends Fragment implements PopupMenu.OnMenuItemCli
     PopupMenu popupMenu;
 
     String mTitle;
+    int priority;
     Calendar mCalendar;
     boolean mHasDate;
     boolean mHasTime;
@@ -131,7 +129,7 @@ public class NewItemFragment extends Fragment implements PopupMenu.OnMenuItemCli
         mDatePicker = view.findViewById(R.id.date_picker_button);
         mTimePicker = view.findViewById(R.id.time_picker_button);
         mPlacePicker = view.findViewById(R.id.place_picker_button);
-        mColorPicker = view.findViewById(R.id.color_picker_button);
+        mColorPicker = view.findViewById(R.id.priority_picker_button);
         mSetAlarm = view.findViewById(R.id.set_alarm_button);
 
         //show keyboard
@@ -175,7 +173,7 @@ public class NewItemFragment extends Fragment implements PopupMenu.OnMenuItemCli
                         ItemEntity item = new ItemEntity(
                                 removeDateFromString(v.getText().toString(),
                                         dateDetector.getMatchedPositions()),
-                                mCalendar.getTimeInMillis(),
+                                priority, mCalendar.getTimeInMillis(),
                                 mHasDate || dateDetector.isHasDate(),
                                 mHasTime || dateDetector.isHasTime(),
                                 mHasAlarm,
@@ -309,7 +307,7 @@ public class NewItemFragment extends Fragment implements PopupMenu.OnMenuItemCli
     public void showMenu(View view){
         popupMenu = new PopupMenu(getContext(), view);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.color_picker_menu);
+        popupMenu.inflate(R.menu.priority_menu);
         popupMenu.show();
     }
 
@@ -318,19 +316,20 @@ public class NewItemFragment extends Fragment implements PopupMenu.OnMenuItemCli
         int id = item.getItemId();
         switch (id){
             case R.id.priority_urgent_and_important:
-
+                priority = ItemEntity.PRIORITY_URGENT_AND_IMPORTANT;
                 //color red this item
                 return true;
             case R.id.priority_urgent:
-
+                priority = ItemEntity.PRIORITY_URGENT;
                 //color orange this item
                 return true;
 
             case R.id.priority_important:
-
+                priority = ItemEntity.PRIORITY_IMPORTANT;
                 //color grene this item
                 return true;
             default:
+                priority = ItemEntity.PRIORITY_DEFAULT;
                 return true;
         }
     }

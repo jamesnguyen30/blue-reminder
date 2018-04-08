@@ -18,6 +18,9 @@ public interface ItemDao {
     @Query("SELECT * FROM items WHERE date_in_millisecond >= :from AND date_in_millisecond<=:to ORDER BY date_in_millisecond ASC")
     List<ItemEntity> getItemsBetweenDates(long from, long to);
 
+    @Query("SELECT * FROM items WHERE priority=:priority")
+    List<ItemEntity> getItemsByPriority(int priority);
+
     @Query("SELECT COUNT(*) FROM items")
     int size();
 

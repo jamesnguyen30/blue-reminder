@@ -15,7 +15,7 @@ import java.util.List;
 )
 public abstract class ItemDatabase extends RoomDatabase {
     private static ItemDatabase INSTANCE;
-    public static final int VERSION = 2;
+    public static final int VERSION = 3;
     public abstract ItemDao getItemDao();
 
     //TODO fix this design, this class should not hold List<ItemEntity> instance
@@ -70,6 +70,11 @@ public abstract class ItemDatabase extends RoomDatabase {
         calendar.set(Calendar.MINUTE,59);
         long to = calendar.getTimeInMillis();
         items = getItemDao().getItemsBetweenDates(from, to);
+        return items;
+    }
+
+    public List<ItemEntity> queryItemsByPriority(int priority){
+        items = getItemDao().getItemsByPriority(priority);
         return items;
     }
 

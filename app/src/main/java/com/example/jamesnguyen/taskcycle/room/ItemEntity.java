@@ -4,12 +4,21 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.content.ClipData;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 @Entity(tableName = "items")
 public class ItemEntity implements Parcelable {
+
+    public static final int PRIORITY_DEFAULT =0;
+    public static final int PRIORITY_IMPORTANT = 1;
+    public static final int PRIORITY_URGENT = 2;
+    public static final int PRIORITY_URGENT_AND_IMPORTANT = 3;
+
+    public static final int REMINDER_ITEM_TYPE = 0;
+    public static final int HEADER_TYPE = 1;
+
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -18,6 +27,8 @@ public class ItemEntity implements Parcelable {
 
     @ColumnInfo(name="date_in_millisecond")
     private long date;
+
+    private int priority;
 
     @ColumnInfo(name="has_date")
     private boolean hasDate;
@@ -34,8 +45,9 @@ public class ItemEntity implements Parcelable {
     @ColumnInfo(name="readable_access")
     private String readableAddress;
 
+
     @Ignore
-    boolean isHeader; // for reminder adapter
+    int viewType; // for reminder adapter
 
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator<ItemEntity>(){
@@ -59,6 +71,7 @@ public class ItemEntity implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
         dest.writeString(title);
+        dest.writeInt(priority);
         dest.writeString(placeName);
         dest.writeString(readableAddress);
         dest.writeLong(date);
@@ -70,6 +83,7 @@ public class ItemEntity implements Parcelable {
     public ItemEntity(Parcel in){
         this.id = in.readInt();
         this.title = in.readString();
+        this.priority = in.readInt();
         this.date = in.readLong();
         this.hasDate = in.readByte()!=0;
         this.hasTime = in.readByte()!=0;
@@ -77,12 +91,14 @@ public class ItemEntity implements Parcelable {
         this.placeName = in.readString();
         this.readableAddress = in.readString();
     }
+
     public ItemEntity(String title,
-                      long date, boolean hasDate,
+                      int priority, long date, boolean hasDate,
                       boolean hasTime, boolean hasAlarm,
                       String placeName,
                       String readableAddress) {
         this.title = title;
+        this.priority = priority;
         this.date = date;
         this.hasDate = hasDate;
         this.hasTime = hasTime;
@@ -151,16 +167,29 @@ public class ItemEntity implements Parcelable {
         this.hasAlarm = hasAlarm;
     }
 
-    public boolean isHeader() { return isHeader; }
+    public int getViewType() {
+        return viewType;
+    }
 
-    public void setHeader(boolean header) { isHeader = header; }
+    public void setViewType(int viewType) {
+        this.viewType = viewType;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
     public ItemEntity deepCopy(){
         ItemEntity  item = new ItemEntity(
                 title,
-                date, hasDate, hasTime, hasAlarm,
+                priority, date, hasDate, hasTime, hasAlarm,
                 placeName, readableAddress
         );
+        Log.d("ItemEntity", item.hasAlarm?"True":"False");
         item.setId(id);
         return item;
     }
