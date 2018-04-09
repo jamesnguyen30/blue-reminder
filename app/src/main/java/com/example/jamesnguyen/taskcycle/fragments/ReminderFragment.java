@@ -33,6 +33,7 @@ public class ReminderFragment extends Fragment {
     RecyclerView mRecyclerView;
     ReminderAdapter mReminderAdapter;
     FloatingActionButton fab;
+    int loadMode;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class ReminderFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity)getActivity()).turnOnFabButton(fab);
+        ((MainActivity)getActivity()).setToolBarTitle();
     }
 
     public void setReminderAdapter(){
@@ -93,7 +95,7 @@ public class ReminderFragment extends Fragment {
     public void updateDatabase(List<ItemEntity> items){
         turnOffLoadingIcon();
         mReminderAdapter.updateItemList(items);
-        //mReminderAdapter.notifyDataSetChanged();
+        ((MainActivity)getActivity()).setToolBarTitle();
     }
 
     public static ReminderFragment newInstance(){

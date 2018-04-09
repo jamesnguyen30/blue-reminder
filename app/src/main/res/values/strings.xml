@@ -20,5 +20,8 @@
     <!--Settings Preferences-->
     <string name="settings_label">Settings</string>
     <string name="cycle_settings_preferences_title">Cycle Settings</string>
+    <string name="title_activity_about_me">AboutMeActivity</string>
+
+    <string name="introduction_about_me">If you love this app, you can support me by buying me a COFFEE</string>
 
 </resources>

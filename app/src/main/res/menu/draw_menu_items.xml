@@ -43,6 +43,7 @@
     <group
         android:id="@+id/group3">
         <item
+            android:icon="@drawable/ic_person_blue_24dp"
             android:id="@+id/about_me"
             android:title="About Me"/>
     </group>

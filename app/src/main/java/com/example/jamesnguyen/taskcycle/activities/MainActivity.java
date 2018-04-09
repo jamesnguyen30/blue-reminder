@@ -16,7 +16,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -135,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements
                 mDrawerLayout.openDrawer(Gravity.LEFT);
                 return true;
 
+
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -193,6 +194,12 @@ public class MainActivity extends AppCompatActivity implements
                 //TODO start Settings fragment here instead of Action Menu
                 startFragmentWithBackStack(START_SETTING_FRAGMENT, REPLACE_FLAG, null, 0);
                 mDrawerLayout.closeDrawer(Gravity.LEFT);
+                return true;
+
+            case R.id.about_me:
+                //TODO Launch AboutMeActivity
+                Intent intent = new Intent(this, AboutMeActivity.class);
+                startActivity(intent);
                 return true;
         }
 
@@ -279,6 +286,10 @@ public class MainActivity extends AppCompatActivity implements
         this.loadMode = loadMode;
     }
 
+    public int getLoadMode(){
+        return loadMode;
+    }
+
     public void loadByMode(int loadMode){
         asyncTask = new LoadItemsTask(loadMode, true);
         asyncTask.execute();
@@ -356,11 +367,11 @@ public class MainActivity extends AppCompatActivity implements
                 default:
                 case LOAD_ALL_ITEMS :
                     database.queryAllItems();
-                    //setToolBarText("All Items");
+                    //setToolBarTitle("All Items");
                     break;
                 case LOAD_TODAY_ITEMS:
                     database.queryTodayItems();
-                    //setToolBarText("Today");
+                    //setToolBarTitle("Today");
                     break;
                 case SAVE_ITEM :
                     database.insertNewItem(itemEntities);
@@ -373,18 +384,18 @@ public class MainActivity extends AppCompatActivity implements
                     break;
                 case LOAD_DEFAULT_ITEMS:
                     database.queryItemsByPriority(0);
-                    //setToolBarText("Default");
+                    //setToolBarTitle("Default");
                     break;
                 case LOAD_IMPORTANT_ITEMS:
                     database.queryItemsByPriority(1);
-                    //setToolBarText("Important");
+                    //setToolBarTitle("Important");
                     break;
                 case LOAD_URGENT_ITEMS:
                     database.queryItemsByPriority(2);
-                    //setToolBarText("Urgent");
+                    //setToolBarTitle("Urgent");
                     break;
                 case LOAD_URGENT_AND_IMPORTANT_ITEMS:
-                    //setToolBarText("Urgent and Important");
+                    //setToolBarTitle("Urgent and Important");
                     database.queryItemsByPriority(3);
                     break;
 
@@ -443,7 +454,36 @@ public class MainActivity extends AppCompatActivity implements
         fab.setVisibility(View.INVISIBLE);
     }
 
-    public void setToolBarText(String text){
+    public void setToolBarTitle(){
+        switch (loadMode){
+            default:
+            case LoadItemsTask.LOAD_ALL_ITEMS:
+                toolbar.setTitle("All");
+                break;
+            case LoadItemsTask.LOAD_TODAY_ITEMS:
+                toolbar.setTitle("Today");
+                break;
+            case LoadItemsTask.LOAD_DEFAULT_ITEMS:
+                toolbar.setTitle("Default");
+                break;
+            case LoadItemsTask.LOAD_IMPORTANT_ITEMS:
+                toolbar.setTitle("Important");
+                break;
+            case LoadItemsTask.LOAD_URGENT_ITEMS:
+                toolbar.setTitle("Urgent");
+                break;
+            case LoadItemsTask.LOAD_URGENT_AND_IMPORTANT_ITEMS:
+                toolbar.setTitle("Urgent and Important");
+                break;
+        }
+
+    }
+
+    public void setToolbarTitleWithText(String text){
         toolbar.setTitle(text);
+    }
+
+    public void setToolBarSubtitle(String text){
+        toolbar.setSubtitle(text);
     }
 }

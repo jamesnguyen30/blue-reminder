@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.activities.MainActivity;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.DatePickerDialogFragment;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.PriorityPickerDialog;
 import com.example.jamesnguyen.taskcycle.dialogs_fragments.TimePickerDialogFragment;
@@ -65,15 +66,6 @@ public class ItemEditFragment extends Fragment {
     int priority;
 
     ItemEntity tempItem;
-//
-//    String title;
-//    String date;
-//    String time;
-//    String placeName;
-//    String readableAddress;
-//    boolean isHasAlarm;
-//    boolean isHasDate;
-//    boolean isHasTime;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,15 +76,6 @@ public class ItemEditFragment extends Fragment {
         item = args.getParcelable(ITEM_ARGS);
 
         tempItem = item.deepCopy();
-
-//        title = item.getTitle();
-//        date = DateTimeToStringUtil.getDateToString(item);
-//        time = DateTimeToStringUtil.getTimeToString(item);
-//        placeName = item.getPlaceName();
-//        isHasAlarm = item.isHasAlarm();
-//        isHasDate = item.isHasDate();
-//        isHasTime = item.isHasTime();
-//        readableAddress = "";
 
         position = args.getInt(POSITION_ARGS);
     }
@@ -259,6 +242,12 @@ public class ItemEditFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)getActivity()).setToolbarTitleWithText("Reminder Detail");
     }
 
     @Override

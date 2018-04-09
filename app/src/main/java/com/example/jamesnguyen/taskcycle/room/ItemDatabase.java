@@ -82,7 +82,10 @@ public abstract class ItemDatabase extends RoomDatabase {
 //
 //    }
 
-    public int getAllItemsCount(){
-        return getItemDao().size();
+    public int getLoadedItemsCount(){
+        if(items!=null)
+            return items.size();
+        else
+            return 0;
     }
 }
