@@ -22,6 +22,6 @@
     <string name="cycle_settings_preferences_title">Cycle Settings</string>
     <string name="title_activity_about_me">AboutMeActivity</string>
 
-    <string name="introduction_about_me">If you love this app, you can support me by buying me a COFFEE</string>
+    <string name="introduction_about_me">    I\'m James and I live in Dallas, Texas. I\'m a self-taught Android Developer and would love to keep in touch with you.</string>
 
 </resources>

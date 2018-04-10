@@ -26,6 +26,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.example.jamesnguyen.taskcycle.R;
+import com.example.jamesnguyen.taskcycle.dialogs_fragments.UpdateGooglePlayServiceDialog;
 import com.example.jamesnguyen.taskcycle.fragments.ItemEditFragment;
 import com.example.jamesnguyen.taskcycle.fragments.NewItemFragment;
 import com.example.jamesnguyen.taskcycle.fragments.ReminderFragment;
@@ -133,9 +134,6 @@ public class MainActivity extends AppCompatActivity implements
             case android.R.id.home:
                 mDrawerLayout.openDrawer(Gravity.LEFT);
                 return true;
-
-
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -144,7 +142,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        checkGooglePlayServices();
+        if(!checkGooglePlayServices()) {
+            //Show dialog to update google play service
+            UpdateGooglePlayServiceDialog dialog = new UpdateGooglePlayServiceDialog();
+            dialog.show(getSupportFragmentManager(), UpdateGooglePlayServiceDialog.TAG);
+        }
     }
 
     @Override
@@ -172,6 +174,10 @@ public class MainActivity extends AppCompatActivity implements
 
             case R.id.today_items:
                 loadMode = LoadItemsTask.LOAD_TODAY_ITEMS;
+                break;
+
+            case R.id.week_items:
+                loadMode = LoadItemsTask.LOAD_THIS_WEEK_ITEMS;
                 break;
 
             case R.id.default_items:
@@ -351,6 +357,7 @@ public class MainActivity extends AppCompatActivity implements
         public static final int LOAD_IMPORTANT_ITEMS = 6;
         public static final int LOAD_URGENT_ITEMS = 7;
         public static final int LOAD_URGENT_AND_IMPORTANT_ITEMS = 8;
+        public static final int LOAD_THIS_WEEK_ITEMS = 9;
 
         boolean updateReminderFragment;
         int flag;
@@ -398,7 +405,9 @@ public class MainActivity extends AppCompatActivity implements
                     //setToolBarTitle("Urgent and Important");
                     database.queryItemsByPriority(3);
                     break;
-
+                case LOAD_THIS_WEEK_ITEMS:
+                    database.queryThisWeekItems();
+                    break;
             }
             return null;
         }

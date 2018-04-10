@@ -10,6 +10,11 @@
             android:id="@+id/today_items"
             android:icon="@drawable/ic_today_dark_24dp"
             android:title="Today"/>
+
+        <item
+            android:id="@+id/week_items"
+            android:icon="@drawable/ic_view_week_black_24dp"
+            android:title="Next 7 Days"/>
     </group>
 
     <group android:id="@+id/group4">

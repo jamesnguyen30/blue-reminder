@@ -34,7 +34,12 @@ dependencies {
     //dagger
     implementation 'com.google.dagger:dagger:2.15'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.15'
-    //using google play services - map
+    //using google play services - places
     implementation 'com.google.android.gms:play-services-places:12.0.0'
     implementation 'com.android.support:design:26.1.0'
+
+    implementation 'com.github.Shashank02051997:FancyToast-Android:0.1.3'
+
+
+
 }

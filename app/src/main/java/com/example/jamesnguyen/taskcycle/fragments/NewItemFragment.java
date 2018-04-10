@@ -44,6 +44,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.Calendar;
 import java.util.List;
@@ -187,7 +188,7 @@ public class NewItemFragment extends Fragment implements PopupMenu.OnMenuItemCli
                             //set alarm
                             AlarmManagerUtil.addAlarm(getContext(), item);
                         }
-
+                        FancyToast.makeText(getContext(), "New Item Created", Toast.LENGTH_SHORT,FancyToast.SUCCESS,false).show();
                         getActivity().getSupportFragmentManager().popBackStack();
                         return false;
                     default:

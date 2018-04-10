@@ -34,6 +34,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.Calendar;
 
@@ -208,10 +209,11 @@ public class ItemEditFragment extends Fragment {
                             mCheckBoxAlarm.setChecked(true);
                             return;
                         } else {
-                            Toast.makeText(getContext(), "Overdue!", Toast.LENGTH_SHORT).show();
+                            FancyToast.makeText(getContext(), "Overdue!", Toast.LENGTH_SHORT,FancyToast.ERROR,false).show();
                         }
                     } else {
-                        Toast.makeText(getContext(), "No available date", Toast.LENGTH_SHORT).show();
+                        FancyToast.makeText(getContext(), "No Available Date", Toast.LENGTH_SHORT,FancyToast.ERROR,false).show();
+
                     }
                     tempItem.setHasAlarm(false);
                     mCheckBoxAlarm.setChecked(false);
@@ -236,6 +238,10 @@ public class ItemEditFragment extends Fragment {
                     Fragment fragment = getTargetFragment();
                     fragment.onActivityResult(ReminderFragment.REQUEST_CODE,
                             Activity.RESULT_OK, intent);
+                    FancyToast.makeText(getContext(), "Saved Changes", Toast.LENGTH_SHORT,FancyToast.SUCCESS,false).show();
+                } else {
+                    FancyToast.makeText(getContext(), "No Changes", Toast.LENGTH_SHORT,FancyToast.INFO,false).show();
+
                 }
                 getActivity().getSupportFragmentManager().popBackStack();
             }
@@ -341,5 +347,7 @@ public class ItemEditFragment extends Fragment {
                 break;
         }
     }
+
+    
 
 }

@@ -73,6 +73,22 @@ public abstract class ItemDatabase extends RoomDatabase {
         return items;
     }
 
+    public List<ItemEntity> queryThisWeekItems(){
+        Calendar calendar = Calendar.getInstance();
+        int currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        calendar.set(Calendar.HOUR_OF_DAY,0);
+        calendar.set(Calendar.MINUTE,0);
+        long from = calendar.getTimeInMillis();
+
+        calendar.set(Calendar.DAY_OF_MONTH, currentDayOfMonth + 7);
+        calendar.set(Calendar.HOUR_OF_DAY,23);
+        calendar.set(Calendar.MINUTE,59);
+        long to = calendar.getTimeInMillis();
+        items = getItemDao().getItemsBetweenDates(from, to);
+        return items;
+
+    }
+
     public List<ItemEntity> queryItemsByPriority(int priority){
         items = getItemDao().getItemsByPriority(priority);
         return items;

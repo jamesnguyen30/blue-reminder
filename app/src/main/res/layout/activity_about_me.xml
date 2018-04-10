@@ -115,6 +115,7 @@
             android:text="Buy Me A Coffee"
             android:textColor="@color/white"
             android:textSize="24sp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/about_me" />
@@ -135,6 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="4dp"
             android:layout_marginEnd="8dp"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/donate"
             app:layout_constraintEnd_toStartOf="@+id/donate"
             app:srcCompat="@drawable/ic_coffee" />
@@ -150,6 +152,21 @@
             app:layout_constraintBottom_toTopOf="@+id/fab_email"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_facebook_app_symbol" />
+
+        <TextView
+            android:id="@+id/visit_play_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:fontFamily="monospace"
+            android:text="Visit My Playstore"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/donate" />
 
 
     </android.support.constraint.ConstraintLayout>

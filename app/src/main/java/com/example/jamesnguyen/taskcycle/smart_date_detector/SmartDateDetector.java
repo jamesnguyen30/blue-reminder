@@ -14,8 +14,8 @@ public class SmartDateDetector {
     //setup regular reminder like: read book every morning at 5am
     private final String REG_PATTERN =
             "(everyday|today|tomorrow|next week|next month|next year)|" +
-                    "(on *|next *)?(monday|mon|tuesday|tue|wednesday|wed|thursday|thu|friday|fri|saturday|sat|sunday|sun)|" +
-                    "(on *)?(january|jan|february|feb|march|mar|april|may|june|july|jul|august|aug|september|sep|october|oct|november|nov|december|dec) *(\\d{1,2})? (\\d{4})?|" +
+                    "(on *|next *)(monday|mon|tuesday|tue|wednesday|wed|thursday|thu|friday|fri|saturday|sat|sunday|sun)|" +
+                    "(on *)?(january|jan|february|feb|march|mar|april|may|june|july|jul|august|aug|september|sep|october|oct|november|nov|december|dec) *(\\d{1,2})?(\\d{4})?|" +
                     "(on *)(\\d{1,2})[.](\\d{1,2})[.]?(\\d{4})?|" +
                     "(at *)(\\d{1,2}) {0,1}(: *(\\d{1,2}))? {0,1}(am|pm|in the morning|in morning|morning|in the night|at night|night|in the evening)?";
 
@@ -244,20 +244,25 @@ public class SmartDateDetector {
             setDay = 7;
         }
 
-
         if(setDay < today){
+
             if(setDay!=1)
                 return (7%today)+setDay;
-            else{ // this is a work around solution for sunday, because
+            else{
+                // this is a work around solution for sunday, because
                 // sun day is new day of the week, according to Calendar object
                 // but most people think sunday is the last day of the week
                 // so if this is sunday, +7, user will use this intuitively
-                return (7%today)+setDay + 7;
+                if(isNextWeek){
+                    return (7 - today)+8;
+                }else
+                    return (7 - today)+1;
             }
         } else {
-            if(isNextWeek) // if user says next week
-                return (setDay+7) - today;
-            return setDay - today;
+            if(isNextWeek) { // if user says next week
+                return (setDay + 7) - today;
+            } else
+                return setDay - today;
         }
     }
 

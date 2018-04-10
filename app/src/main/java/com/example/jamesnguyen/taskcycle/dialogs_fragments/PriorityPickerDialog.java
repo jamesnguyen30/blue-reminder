@@ -21,7 +21,6 @@ public class PriorityPickerDialog extends DialogFragment{
             "Important",
             "Urgent",
             "Urgent and Important"
-
     };
     @NonNull
     @Override
