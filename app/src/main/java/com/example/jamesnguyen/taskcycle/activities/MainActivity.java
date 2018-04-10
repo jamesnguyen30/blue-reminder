@@ -35,10 +35,13 @@ import com.example.jamesnguyen.taskcycle.recycler_view.ReminderAdapter;
 import com.example.jamesnguyen.taskcycle.room.ItemDatabase;
 import com.example.jamesnguyen.taskcycle.room.ItemEntity;
 import com.example.jamesnguyen.taskcycle.utils.AlarmManagerUtil;
+import com.example.jamesnguyen.taskcycle.utils.DateTimeToStringUtil;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements
         NewItemFragment.OnNewItemCreated,
@@ -111,17 +114,25 @@ public class MainActivity extends AppCompatActivity implements
 
         registerNotificationChannel();
 
+//        //print time zone
+//        Calendar c=  Calendar.getInstance();
+//        SimpleDateFormat sdf = new SimpleDateFormat("M d yyyy, hh:mm a");
+//        Log.d("MainActivity", sdf.format(c.getTime()));
+        //TODO if greeting activity is not played, show it
+//        Intent intent =new Intent(this, GreetingActivity.class);
+//        startActivity(intent);
+
     }
 
     public ItemDatabase getDatabase(){
         return database;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

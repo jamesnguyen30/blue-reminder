@@ -2,27 +2,52 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
     <!-- opens a subscreen of settings -->
-  <PreferenceCategory
-      android:title="@string/cycle_settings_preferences_title">
-      <EditTextPreference
-          android:title="Work Time"
-          android:key="@string/pref_work_length_key"
-          android:defaultValue="45"
-          >
-      </EditTextPreference>
 
-      <EditTextPreference
-          android:title="Short Break"
-          android:key="@string/pref_short_break_key"
-          android:defaultValue="15"
-          >
-      </EditTextPreference>
+    <PreferenceScreen
+        android:icon="@drawable/ic_heart_red"
+        android:title="Support Me">
+        <Preference android:selectable="false"
+            android:key="support_me"
+            android:enabled="true"
+            android:title="You can support me by sharing this app"
+            android:summary="Thank you!"/>
 
-      <EditTextPreference
-          android:title="Long Break"
-          android:key="@string/pref_long_break_key"
-          android:defaultValue="60"
-          >
-      </EditTextPreference>
-  </PreferenceCategory>
+    </PreferenceScreen>
+
+    <PreferenceScreen
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="Contact">
+        <Preference android:selectable="false"
+            android:enabled="true"
+            android:title="Follow Facebook"
+            android:key="follow_facebook"/>
+
+        <Preference android:selectable="false"
+            android:enabled="true"
+            android:title="Email me"
+            android:key="email_me"/>
+
+    </PreferenceScreen>
+
+    <EditTextPreference
+        android:icon="@drawable/ic_heart_red"
+        android:title="Work Time"
+        android:key="@string/pref_work_length_key"
+        android:defaultValue="45"
+        >
+    </EditTextPreference>
+
+    <EditTextPreference
+        android:title="Short Break"
+        android:key="@string/pref_short_break_key"
+        android:defaultValue="15"
+        >
+    </EditTextPreference>
+
+    <EditTextPreference
+        android:title="Long Break"
+        android:key="@string/pref_long_break_key"
+        android:defaultValue="60"
+        >
+    </EditTextPreference>
 </PreferenceScreen>

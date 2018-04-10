@@ -3,6 +3,7 @@ package com.example.jamesnguyen.taskcycle.notification_builder;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 
 import com.example.jamesnguyen.taskcycle.R;
@@ -28,8 +29,10 @@ public class NotificationBuilder {
                 .setContentTitle(contentTitle)
                 .setContentText(contentDescription)
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_timer_white_24dp)
-                        .setAutoCancel(true)
+                .setSmallIcon(R.drawable.ic_check_black_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
+                        R.mipmap.app_icon))
+                .setAutoCancel(true)
                 .setOnlyAlertOnce(true);
         return builder;
     }
