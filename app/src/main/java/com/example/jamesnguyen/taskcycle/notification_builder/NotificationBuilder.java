@@ -29,9 +29,7 @@ public class NotificationBuilder {
                 .setContentTitle(contentTitle)
                 .setContentText(contentDescription)
                 .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_check_black_24dp)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(),
-                        R.mipmap.app_icon))
+                .setSmallIcon(R.drawable.ic_icon_notification)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true);
         return builder;

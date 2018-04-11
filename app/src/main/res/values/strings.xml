@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TaskCycle</string>
+    <string name="app_name">Blue Reminder</string>
     <string name="action_settings">Settings</string>
 
     <!--Notification Channel-->
