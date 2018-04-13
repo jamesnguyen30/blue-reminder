@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.jamesnguyen.taskcycle">
+    package="com.myapp.jamesnguyen.bluereminder">
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/app_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/app_icon_round"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -23,22 +23,18 @@
             </intent-filter>
         </activity>
 
+        <!-- Places API Key for release -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB3oRAxsY93GkiNsA1Ng9Zgr2ce8zROsjk" />
+            android:value="AIzaSyABHdI1eWocID0EWFxWLpyp3Q8RR_Gih5U" />
+
+        <!-- Places API Key for debug -->
+        <!--<meta-data-->
+            <!--android:name="com.google.android.geo.API_KEY"-->
+            <!--android:value="AIzaSyCHxsxVtn4xuUcG11kgsKZYgW8cP98dChM" />-->
 
         <receiver android:name=".broadcast_receivers.AlarmBroadcastReceiver" />
 
-        <activity
-            android:name=".activities.AboutMeActivity"
-            android:label="@string/title_activity_about_me"
-            android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity
-            android:name=".activities.GreetingActivity"
-            android:label="@string/title_activity_greeting"
-            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

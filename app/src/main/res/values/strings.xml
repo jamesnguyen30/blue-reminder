@@ -12,7 +12,7 @@
     <string name="pref_work_length_key">sp_work_length_key</string>
     <string name="pref_short_break_key">sp_short_break_length_key</string>
     <string name="pref_long_break_key">sp_long_break_length_key</string>
-
+    <string name="pref_auto_alarm">pref_alarm_auto</string>
     <!--Time picker preference-->
     <string name="timer_picker_positive_button">Set</string>
     <string name="timer_picker_negative_button">Cancel</string>

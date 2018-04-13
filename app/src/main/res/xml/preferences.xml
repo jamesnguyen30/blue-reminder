@@ -1,53 +1,77 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="settings_preference"
     >
     <!-- opens a subscreen of settings -->
 
-    <PreferenceScreen
-        android:icon="@drawable/ic_heart_red"
-        android:title="Support Me">
-        <Preference android:selectable="false"
-            android:key="support_me"
-            android:enabled="true"
-            android:title="You can support me by sharing this app"
-            android:summary="Thank you!"/>
-
-    </PreferenceScreen>
-
-    <PreferenceScreen
+    <Preference android:selectable="true"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="Contact">
-        <Preference android:selectable="false"
-            android:enabled="true"
-            android:title="Follow Facebook"
-            android:key="follow_facebook"/>
+        android:enabled="true"
+        android:title="Blue Reminder"
+        android:summary="Version 1.0"/>
 
-        <Preference android:selectable="false"
-            android:enabled="true"
-            android:title="Email me"
-            android:key="email_me"/>
+    <Preference android:selectable="true"
+        android:icon="@drawable/ic_email_dark_24dp"
+        android:enabled="true"
+        android:title="Send me an email"
+        android:summary="send to james.nguyen.dev.30@gmail.com"
+        android:key="send_me_email"/>
 
-    </PreferenceScreen>
+    <Preference android:selectable="true"
+        android:icon="@drawable/ic_play_store_dark"
+        android:enabled="true"
+        android:title="Visit my store"
+        android:summary="Visit James Nguyen on Google Play Store"
+        android:key="visit_store"/>
 
-    <EditTextPreference
-        android:icon="@drawable/ic_heart_red"
-        android:title="Work Time"
-        android:key="@string/pref_work_length_key"
-        android:defaultValue="45"
-        >
-    </EditTextPreference>
+    <!--<PreferenceCategory-->
+        <!--android:title="Utilities"-->
+        <!--&gt;-->
+        <!--<SwitchPreferenceCompat-->
+            <!--android:icon="@drawable/ic_alarm_black_24dp"-->
+            <!--android:title="Set alarm automatically"-->
+            <!--android:summary="Set alarm when you type both date and time"-->
+            <!--android:key="@string/pref_auto_alarm"-->
+            <!--android:defaultValue="false"/>-->
 
-    <EditTextPreference
-        android:title="Short Break"
-        android:key="@string/pref_short_break_key"
-        android:defaultValue="15"
-        >
-    </EditTextPreference>
+    <!--</PreferenceCategory>-->
 
-    <EditTextPreference
-        android:title="Long Break"
-        android:key="@string/pref_long_break_key"
-        android:defaultValue="60"
-        >
-    </EditTextPreference>
 </PreferenceScreen>
+
+
+    <!--<PreferenceScreen-->
+    <!--android:icon="@drawable/ic_info_black_24dp"-->
+    <!--android:title="Contact">-->
+    <!--<Preference android:selectable="false"-->
+    <!--android:enabled="true"-->
+    <!--android:title="Follow Facebook"-->
+    <!--android:key="follow_facebook"/>-->
+
+    <!--<Preference android:selectable="false"-->
+    <!--android:enabled="true"-->
+    <!--android:title="Email me"-->
+    <!--android:key="email_me"/>-->
+
+    <!--</PreferenceScreen>-->
+
+    <!--<EditTextPreference-->
+    <!--android:icon="@drawable/ic_heart_red"-->
+    <!--android:title="Work Time"-->
+    <!--android:key="@string/pref_work_length_key"-->
+    <!--android:defaultValue="45"-->
+    <!--&gt;-->
+    <!--</EditTextPreference>-->
+
+    <!--<EditTextPreference-->
+    <!--android:title="Short Break"-->
+    <!--android:key="@string/pref_short_break_key"-->
+    <!--android:defaultValue="15"-->
+    <!--&gt;-->
+    <!--</EditTextPreference>-->
+
+    <!--<EditTextPreference-->
+    <!--android:title="Long Break"-->
+    <!--android:key="@string/pref_long_break_key"-->
+    <!--android:defaultValue="60"-->
+    <!--&gt;-->
+    <!--</EditTextPreference>-->
